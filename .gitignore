@@ -33,4 +33,5 @@ build/
 .vscode/
 
 requirment_file/
-screenshots/
+node_modules/
+cookies.txt

@@ -26,6 +26,16 @@ A full-stack e-commerce web application built with Spring Boot. Supports three r
 - **User Management** — admin approves sellers, manages accounts
 - **Address Management** — multiple address types per user
 
+## Screenshots
+
+| Sign In | Register |
+|---------|----------|
+| ![Login](screenshots/login.png) | ![Sign Up](screenshots/signup.png) |
+
+| Product List (Buyer) | Admin — Seller Management |
+|----------------------|--------------------------|
+| ![Products](screenshots/products.png) | ![Admin](screenshots/admin.png) |
+
 ## Quick Start (Docker)
 
 ```bash

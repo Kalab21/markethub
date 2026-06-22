@@ -40,6 +40,14 @@ A full-stack e-commerce web application built with Spring Boot. Supports three r
 - **User Management** — admin approves sellers, manages accounts
 - **Address Management** — multiple address types per user
 
+## Quick Start (Docker)
+
+```bash
+docker compose up --build
+```
+
+App starts at `http://localhost:8081`. MySQL data persists in a named volume.
+
 ## Prerequisites
 
 - Java 17+

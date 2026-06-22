@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: cs425-swe-online-market-db
+      MYSQL_USER: cs425-swe-online-market-db-sys
+      MYSQL_PASSWORD: online-market-db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    ports:
+      - "8081:8081"
+    environment:
+      MYSQLHOST: db
+      MYSQLPORT: 3306
+      MYSQLDATABASE: cs425-swe-online-market-db
+      MYSQLUSER: cs425-swe-online-market-db-sys
+      MYSQLPASSWORD: online-market-db
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

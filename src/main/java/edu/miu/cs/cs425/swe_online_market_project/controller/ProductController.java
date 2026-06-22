@@ -4,6 +4,7 @@ import edu.miu.cs.cs425.swe_online_market_project.model.Product;
 import edu.miu.cs.cs425.swe_online_market_project.service.ProductService;
 import edu.miu.cs.cs425.swe_online_market_project.service.imp.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,8 +25,12 @@ public class ProductController {
 
     // Displays
     @GetMapping("/list")
-    public String displayAllProducts(Model model){
-        model.addAttribute("products", productService.getAllProducts());
+    public String displayAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
+        Page<Product> productPage = productService.getPagedProducts(page, size);
+        model.addAttribute("products", productPage);
         model.addAttribute("currentUser", userDetailsServiceImpl.getCurrentUser());
         return "secured/services/buyer/product/list";
     }

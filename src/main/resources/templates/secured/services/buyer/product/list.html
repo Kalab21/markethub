@@ -47,35 +47,40 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="product,iterStat : ${products}">
-
-                <th scope="row" th:text="${iterStat.count}+${'.'}"></th>
+            <tr th:each="product,iterStat : ${products.content}">
+                <th scope="row" th:text="${products.number * products.size + iterStat.count}+${'.'}"></th>
                 <td th:text="${product.sku}"></td>
                 <td th:text="${product.name}"></td>
                 <td th:text="${product.price}"></td>
                 <td th:text="${product.description}"></td>
                 <td th:text="${product.quantity}"></td>
-<!--                <td th:headers=""></td>-->
-
-
-
                 <td>
                     <a th:href="@{|/onlinemarket/cart/${currentUser.shoppingCart.getCartId}/addproduct/${product.productId}|}">Add to cart</a>
-
-<!--                    <form action="@{|/onlinemarket/cart/${currentUser.shoppingCart.id}/addproduct/${product.productId}|}" method="get">-->
-
-<!--                        <input type="submit" value="Add to cart">-->
-
-<!--&lt;!&ndash;                        <a th:href="@{|/onlinemarket/cart/${currentUser.shoppingCart.id}/addproduct/${product.productId}|}">Add new Products</a>&ndash;&gt;-->
-<!--                    </form>-->
                 </td>
-
             </tr>
-            <tr th:if="${products.size() < 1}">
+            <tr th:if="${products.totalElements == 0}">
                 <td colspan="8" th:align="center">No Product found</td>
             </tr>
             </tbody>
         </table>
+
+        <!-- Pagination -->
+        <nav th:if="${products.totalPages > 1}" aria-label="Product pages">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${products.first} ? 'disabled'">
+                    <a class="page-link" th:href="@{/onlinemarket/secured/services/products/list(page=${products.number - 1}, size=${products.size})}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, products.totalPages - 1)}"
+                    th:classappend="${i == products.number} ? 'active'">
+                    <a class="page-link" th:href="@{/onlinemarket/secured/services/products/list(page=${i}, size=${products.size})}" th:text="${i + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${products.last} ? 'disabled'">
+                    <a class="page-link" th:href="@{/onlinemarket/secured/services/products/list(page=${products.number + 1}, size=${products.size})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+        <p class="text-center text-muted" th:if="${products.totalElements > 0}"
+           th:text="|Showing ${products.number * products.size + 1}–${(products.number * products.size + products.numberOfElements)} of ${products.totalElements} products|"></p>
 
     </div>
 </div>

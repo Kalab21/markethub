@@ -1,11 +1,13 @@
 package edu.miu.cs.cs425.swe_online_market_project.service;
 
 import edu.miu.cs.cs425.swe_online_market_project.model.Product;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface ProductService {
     List<Product> getAllProducts();
+    Page<Product> getPagedProducts(int page, int size);
 
     Product getProductById(long id);
 

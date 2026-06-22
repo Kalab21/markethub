@@ -4,6 +4,9 @@ import edu.miu.cs.cs425.swe_online_market_project.model.Product;
 import edu.miu.cs.cs425.swe_online_market_project.repository.ProductRepository;
 import edu.miu.cs.cs425.swe_online_market_project.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +19,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    @Override
+    public Page<Product> getPagedProducts(int page, int size) {
+        return productRepository.findAll(PageRequest.of(page, size, Sort.by("name")));
     }
 
     @Override

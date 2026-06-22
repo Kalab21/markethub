@@ -105,3 +105,7 @@ src/main/resources/
 ## Default Port
 
 `8081` — configurable via `server.port` in `application.properties`
+
+## Technical Overview
+
+See [PROJECT.md](PROJECT.md) for architecture, design decisions, domain model, and testing details.

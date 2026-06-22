@@ -33,7 +33,8 @@ public class FormLoginSecurityConfig {
                 .frameOptions().sameOrigin()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/resources/static/**", "/images/**", "/css/**", "/onlinemarket/public/**", "/onlinemarket/public/signup").permitAll()
+                .antMatchers("/resources/static/**", "/images/**", "/css/**", "/onlinemarket/public/**", "/onlinemarket/public/signup",
+                        "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .antMatchers("/", "/onlinemarket").permitAll()
                 .antMatchers("/onlinemarket/secured/services/admin/**").hasRole("ADMIN")
                 .antMatchers("/onlinemarket/secured/services/seller/**").hasRole("SELLER")

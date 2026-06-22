@@ -34,7 +34,7 @@ public class FormLoginSecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/resources/static/**", "/images/**", "/css/**", "/onlinemarket/public/**", "/onlinemarket/public/signup",
-                        "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/error").permitAll()
                 .antMatchers("/", "/onlinemarket").permitAll()
                 .antMatchers("/onlinemarket/secured/services/admin/**").hasRole("ADMIN")
                 .antMatchers("/onlinemarket/secured/services/seller/**").hasRole("SELLER")

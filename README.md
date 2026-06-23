@@ -1,6 +1,6 @@
 # MarketHub
 
-![CI](https://github.com/Kalab21/swe_online_market_project/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/Kalab21/markethub/actions/workflows/ci.yml/badge.svg)
 
 A full-stack e-commerce web application built with Spring Boot. Supports three roles — Admin, Seller, and Buyer — with product listings, shopping cart, order management, payments, and reviews.
 

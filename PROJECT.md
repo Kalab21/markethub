@@ -85,7 +85,7 @@ Raw OpenAPI spec at `/v3/api-docs`.
 MySQL 8.0+ required. Tables auto-created via `spring.jpa.hibernate.ddl-auto=update`.
 
 ```sql
-CREATE DATABASE `cs425-swe-online-market-db`;
+CREATE DATABASE markethub_db;
 ```
 
 Credentials configured via environment variables:
@@ -93,13 +93,16 @@ Credentials configured via environment variables:
 
 ## Testing
 
-19 unit tests across 3 service classes using JUnit 5 + Mockito. Tests run against an H2 in-memory database — no MySQL required for CI.
+38 tests across 7 test classes using JUnit 5 + Mockito. Unit tests run against H2 in-memory — no MySQL required for CI.
 
 ```
-UserServiceImplTest       7 tests  (register, approve seller, CRUD)
-ShoppingCartServiceImplTest  5 tests  (add/remove products, not-found errors)
-ProductServiceImplTest    6 tests  (CRUD, search, not-found)
-Context load test         1 test
+UserServiceImplTest                7 tests  (register, approve seller, CRUD)
+ProductServiceImplTest             6 tests  (CRUD, search, not-found)
+ShoppingCartServiceImplTest        5 tests  (add/remove products, not-found errors)
+ProductApiControllerTest           5 tests  (REST endpoint integration)
+ProductRepositoryIntegrationTest   6 tests  (JPA queries)
+UserRepositoryIntegrationTest      8 tests  (JPA queries)
+MarketHubApplicationTests          1 test   (context load)
 ```
 
 CI runs on every push via GitHub Actions.
@@ -107,13 +110,11 @@ CI runs on every push via GitHub Actions.
 ## Running Locally
 
 ```bash
-# 1. Create database
-mysql -u root -p -e "CREATE DATABASE \`cs425-swe-online-market-db\`;"
+# 1. Create database and user
+mysql -u root -p -e "CREATE DATABASE markethub_db;"
+mysql -u root -p -e "CREATE USER 'markethub_user'@'localhost' IDENTIFIED BY 'markethub_pass'; GRANT ALL ON markethub_db.* TO 'markethub_user'@'localhost';"
 
-# 2. Create user
-mysql -u root -p -e "CREATE USER 'cs425-swe-online-market-db-sys'@'localhost' IDENTIFIED BY 'online-market-db'; GRANT ALL ON \`cs425-swe-online-market-db\`.* TO 'cs425-swe-online-market-db-sys'@'localhost';"
-
-# 3. Start
+# 2. Start
 ./mvnw spring-boot:run   # Mac/Linux
 mvnw.cmd spring-boot:run  # Windows
 ```
@@ -125,12 +126,12 @@ App runs at `http://localhost:8081`
 | Layer | Technology | Version |
 |-------|-----------|---------|
 | Language | Java | 17 |
-| Framework | Spring Boot | 2.6.3 |
-| ORM | Spring Data JPA + Hibernate | 5.6.4 |
-| Security | Spring Security | 5.6.x |
+| Framework | Spring Boot | 3.3.6 |
+| ORM | Spring Data JPA + Hibernate | 6.x |
+| Security | Spring Security | 6.x |
 | Frontend | Thymeleaf + Bootstrap 4 | - |
 | Database | MySQL | 8.0+ |
 | Connector | MySQL Connector/J | 9.1.0 |
 | Build | Maven | 3.x |
-| API Docs | SpringDoc OpenAPI | 1.6.15 |
+| API Docs | SpringDoc OpenAPI | 2.6.0 |
 | Testing | JUnit 5 + Mockito + H2 | - |

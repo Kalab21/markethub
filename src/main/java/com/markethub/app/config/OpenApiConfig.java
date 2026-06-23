@@ -19,7 +19,7 @@ public class OpenApiConfig {
                         .version("1.0.0")
                         .contact(new Contact()
                                 .name("Kalabe Kebede")
-                                .email("Kalabe.Kebede@revature.net"))
+                                .email("kkebed21@gmail.com"))
                         .license(new License()
                                 .name("MIT")));
     }

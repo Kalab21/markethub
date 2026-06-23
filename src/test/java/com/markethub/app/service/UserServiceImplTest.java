@@ -2,8 +2,10 @@ package com.markethub.app.service;
 
 import com.markethub.app.DTO.SignUp;
 import com.markethub.app.model.Role;
+import com.markethub.app.model.ShoppingCart;
 import com.markethub.app.model.User;
 import com.markethub.app.repository.RoleRepository;
+import com.markethub.app.repository.ShoppingCartRepository;
 import com.markethub.app.repository.UserRepository;
 import com.markethub.app.service.imp.UserServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ class UserServiceImplTest {
     @Mock private UserRepository userRepository;
     @Mock private RoleRepository roleRepository;
     @Mock private PasswordEncoder passwordEncoder;
+    @Mock private ShoppingCartRepository shoppingCartRepository;
     @InjectMocks private UserServiceImpl userService;
 
     @Test
@@ -37,6 +40,7 @@ class UserServiceImplTest {
         when(roleRepository.findByRoleType("ROLE_BUYER")).thenReturn(Optional.empty());
         when(roleRepository.save(any(Role.class))).thenReturn(new Role(1L, "ROLE_BUYER", null));
         when(passwordEncoder.encode("password123")).thenReturn("hashed");
+        when(shoppingCartRepository.save(any(ShoppingCart.class))).thenReturn(new ShoppingCart());
 
         User saved = new User();
         saved.setUserId(1L);
@@ -81,6 +85,7 @@ class UserServiceImplTest {
         when(userRepository.existsByEmail("jane@test.com")).thenReturn(false);
         when(roleRepository.findByRoleType("ROLE_SELLER")).thenReturn(Optional.of(existingRole));
         when(passwordEncoder.encode(any())).thenReturn("hashed");
+        when(shoppingCartRepository.save(any(ShoppingCart.class))).thenReturn(new ShoppingCart());
         when(userRepository.save(any(User.class))).thenReturn(new User());
 
         userService.registerUser(signUp);

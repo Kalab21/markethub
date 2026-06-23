@@ -8,7 +8,7 @@ A full-stack e-commerce web application built with Spring Boot. Supports three r
 
 | Layer | Technology |
 |-------|-----------|
-| Backend | Spring Boot 2.6.3, Java 17 |
+| Backend | Spring Boot 3.3.6, Java 17 |
 | ORM | Spring Data JPA + Hibernate |
 | Security | Spring Security + Spring Session |
 | Frontend | Thymeleaf, HTML5, CSS |
@@ -36,6 +36,20 @@ A full-stack e-commerce web application built with Spring Boot. Supports three r
 |----------------------|--------------------------|
 | ![Products](screenshots/products.png) | ![Admin](screenshots/admin.png) |
 
+| Shopping Cart |
+|--------------|
+| ![Cart](screenshots/cart.png) |
+
+## Demo Credentials
+
+Seeded automatically on first run:
+
+| Role | Username | Password |
+|------|----------|----------|
+| Admin | `admin` | `password` |
+| Seller | `seller` | `password` |
+| Buyer | `buyer` | `password` |
+
 ## Quick Start (Docker)
 
 ```bash
@@ -57,7 +71,7 @@ App starts at `http://localhost:8081`. MySQL data persists in a named volume.
 Create the database in MySQL:
 
 ```sql
-CREATE DATABASE `cs425-swe-online-market-db`;
+CREATE DATABASE markethub_db;
 ```
 
 ### 2. Configure credentials
@@ -105,6 +119,14 @@ src/main/resources/
 | ADMIN | Manage all users, approve sellers, full access |
 | SELLER | Create/manage own products, view orders for their products |
 | BUYER | Browse products, manage cart, place orders, write reviews |
+
+## API Docs
+
+Swagger UI available at `http://localhost:8081/swagger-ui.html` after startup.
+
+OpenAPI JSON: `http://localhost:8081/v3/api-docs`
+
+Health check: `http://localhost:8081/actuator/health`
 
 ## Default Port
 

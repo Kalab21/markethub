@@ -1,16 +1,20 @@
 package com.markethub.app.model;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import lombok.Setter;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "products")
 
@@ -24,6 +28,7 @@ public class Product implements Serializable {
     @Column(length = 50, nullable = false)
     private String name;
 
+    @Positive
     @NotNull
     @Column(nullable = false)
     private double price;
@@ -33,6 +38,7 @@ public class Product implements Serializable {
     @Column(nullable = false)
     private String description;
 
+    @PositiveOrZero
     @NotNull
     @Column(nullable = false)
     private int quantity;

@@ -1,48 +1,55 @@
 package com.markethub.app.service.imp;
 
+import com.markethub.app.exception.ResourceNotFoundException;
 import com.markethub.app.model.Address;
 import com.markethub.app.repository.AddressRepository;
 import com.markethub.app.service.AddressService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class AddressServiceImpl implements AddressService {
-    @Autowired
-    private AddressRepository addressRepository;
+
+    private final AddressRepository addressRepository;
+
+    public AddressServiceImpl(AddressRepository addressRepository) {
+        this.addressRepository = addressRepository;
+    }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Address> getAllAddress() {
         return addressRepository.findAll();
     }
 
     @Override
+    @Transactional
     public Address createAddress(Address address) {
         return addressRepository.save(address);
     }
 
-
-
     @Override
+    @Transactional
     public void deleteAddressById(Long id) {
         addressRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public Address updateAddress(Address address, Long id) {
-        Address address1 = addressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Address not found: " + id));
-        address1.setId(address.getId());
-        address1.setStreet(address.getStreet());
-        address1.setCity(address.getCity());
-        address1.setState(address.getState());
-        address1.setZipCode(address.getZipCode());
-        address1.setAddressType(address.getAddressType());
-        address1.setPhoneNumber(address.getPhoneNumber());
-        address1.setUser(address.getUser());
-        return addressRepository.save(address1);
+        Address existing = addressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found: " + id));
+        existing.setStreet(address.getStreet());
+        existing.setCity(address.getCity());
+        existing.setState(address.getState());
+        existing.setZipCode(address.getZipCode());
+        existing.setAddressType(address.getAddressType());
+        existing.setPhoneNumber(address.getPhoneNumber());
+        existing.setUser(address.getUser());
+        return addressRepository.save(existing);
     }
-
 }

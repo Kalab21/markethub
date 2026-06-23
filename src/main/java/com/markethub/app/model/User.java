@@ -1,16 +1,19 @@
 package com.markethub.app.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -33,6 +36,7 @@ public class User implements Serializable {
     private String userName;
     @Email
     private String email;
+    @JsonIgnore
     @NotNull
     @NotBlank
     @Column(nullable = false)
@@ -53,6 +57,7 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user")
     List<Payment> payment;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "shopping_cart_Id")
     private ShoppingCart shoppingCart;

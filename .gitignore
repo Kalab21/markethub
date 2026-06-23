@@ -35,3 +35,8 @@ build/
 requirment_file/
 node_modules/
 cookies.txt
+app_out.txt
+app_err.txt
+compile_out.txt
+compile_err.txt
+.env

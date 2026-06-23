@@ -26,6 +26,7 @@ services:
       MYSQLDATABASE: markethub_db
       MYSQLUSER: markethub_user
       MYSQLPASSWORD: markethub_pass
+      SPRING_PROFILES_ACTIVE: prod
     depends_on:
       db:
         condition: service_healthy

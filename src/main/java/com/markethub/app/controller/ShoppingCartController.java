@@ -91,8 +91,7 @@ public class ShoppingCartController {
         orderService.saveOrder(order);
 
         shoppingCartService.deleteAllProductsFromCart(cartId);
-        String buyerId=cart.getBuyer().getUserId().toString();
-        return "redirect:/onlinemarket/cart/"+buyerId;
+        return "redirect:/orders/user/" + userId + "?ordered";
 
     }
 

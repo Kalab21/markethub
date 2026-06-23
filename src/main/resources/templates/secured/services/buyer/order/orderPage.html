@@ -13,6 +13,10 @@
         </h1>
         <p class="page-subtitle">Track the status of your placed orders.</p>
     </div>
+    <div th:if="${param.ordered}" class="alert alert-success d-flex align-items-center gap-2 mb-3" role="alert">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Order placed successfully! Your cart has been cleared.</span>
+    </div>
     <hr class="section-divider"/>
 
     <div th:if="${orders != null and !orders.isEmpty()}">

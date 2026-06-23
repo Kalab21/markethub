@@ -65,7 +65,7 @@ async function signup(page, first, last, username, email, password, role) {
   await shot(page, 'products');
 
   console.log('Buyer: cart...');
-  await page.goto(`${BASE}/onlinemarket/secured/services`, { waitUntil: 'networkidle2' });
+  await page.goto(`${BASE}/onlinemarket/cart/me`, { waitUntil: 'networkidle2' });
   await shot(page, 'cart');
 
   console.log('Logging out buyer...');

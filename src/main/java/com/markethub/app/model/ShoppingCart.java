@@ -20,7 +20,7 @@ public class ShoppingCart implements Serializable {
     @OneToOne(mappedBy = "shoppingCart")
     private User buyer;
 
-    @OneToMany
+    @OneToMany(fetch = javax.persistence.FetchType.EAGER)
     @JoinColumn(name= "carts_products")
     private List<Product> products;
 

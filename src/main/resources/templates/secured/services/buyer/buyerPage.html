@@ -1,13 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/master-layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>MarketHub — Buyer Dashboard</title>
 </head>
 <body>
-
-<h1>
-    Buyer Page
-</h1>
+<div layout:fragment="content" class="container" style="padding-top:2em;">
+    <h3 th:text="'Welcome, ' + ${currentUser?.firstName} + '!'">Welcome!</h3>
+    <hr/>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card border-primary h-100">
+                <div class="card-header bg-primary text-white">Browse Products</div>
+                <div class="card-body d-flex flex-column">
+                    <p class="card-text">Explore all available products from our sellers.</p>
+                    <a th:href="@{/onlinemarket/secured/services/products/list}"
+                       class="btn btn-primary mt-auto">View Products</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card border-success h-100">
+                <div class="card-header bg-success text-white">Shopping Cart</div>
+                <div class="card-body d-flex flex-column">
+                    <p class="card-text">View and manage items in your cart.</p>
+                    <a th:href="@{|/onlinemarket/cart/${currentUser?.userId}|}"
+                       class="btn btn-success mt-auto">Go to Cart</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card border-info h-100">
+                <div class="card-header bg-info text-white">My Orders</div>
+                <div class="card-body d-flex flex-column">
+                    <p class="card-text">Track your order history and status.</p>
+                    <a th:href="@{|/orders/user/${currentUser?.userId}|}"
+                       class="btn btn-info mt-auto">View Orders</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="footer"></th:block>
 </body>
 </html>

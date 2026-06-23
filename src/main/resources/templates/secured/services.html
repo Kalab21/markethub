@@ -8,13 +8,14 @@
     </head>
     <body>
         <div layout:fragment="content" style="padding-top:1em;" class="container">
-            <h2>MarketHub Services</h2>
+            <h2>Welcome to MarketHub</h2>
+            <h5 th:text="'Welcome, ' + ${currentUser.firstName} + '!'"></h5>
             <hr/>
             <div style="font-size: 1em">
                 <br/>
                 <div class="row">
 
-                    <div sec:authorize="hasAuthority('BUYER')" class="col-md-4">
+                    <div sec:authorize="hasAuthority('ROLE_BUYER')" class="col-md-4">
                         <div style="font-size: 1em;">
                             <div class="card border-primary mb-3" style="max-width: 20rem;">
                                 <div class="card-header">WELCOME TO ONLINE MARKET SYSTEM</div>
@@ -26,9 +27,6 @@
                                         </a>
                                     </p>
                                     <p class="card-text">
-                                        <a href="/elibrary/secured/services/admin/versioninfo"></a>
-
-
                                         <a style="text-decoration: inherit;" th:href="@{|/onlinemarket/cart/${currentUser.userId}|}">
                                             Shopping Cart
                                         </a>
@@ -46,7 +44,7 @@
 
 
 
-                    <div sec:authorize="hasAuthority('SELLER')" class="col-md-4">
+                    <div sec:authorize="hasAuthority('ROLE_SELLER')" class="col-md-4">
                         <div style="font-size: 1em;">
                             <div class="card border-primary mb-3" style="max-width: 20rem;">
                                 <a style="text-decoration: inherit;" href="/onlinemarket/secured/services/seller/sellerPage">
@@ -67,25 +65,19 @@
                         </div>
                     </div>
 
-                    <div sec:authorize="hasAuthority('ADMIN')" class="col-md-4">
+                    <div sec:authorize="hasAuthority('ROLE_ADMIN')" class="col-md-4">
                         <div style="font-size: 1em;">
                             <div class="card border-primary mb-3" style="max-width: 20rem;">
                                 <div class="card-header">This is System Administration</div>
                                 <div class="card-body">
                                     <h4 class="card-title">Admin Tools</h4>
                                     <p class="card-text">
-                                        <a href="#">
+                                        <a href="/onlinemarket/secured/services/users/sellers">
                                             Approve Seller
                                         </a>
                                     </p>
                                     <p class="card-text">
-                                        <a href="/elibrary/secured/services/admin/versioninfo"></a>
-                                        <a href="#">
-                                            Approve Reviews
-                                        </a>
-                                    </p>
-                                    <p class="card-text">
-                                        <a href="#">
+                                        <a href="/onlinemarket/secured/services/admin/usrmgmt/list">
                                             Manage Users
                                         </a>
                                     </p>

@@ -11,7 +11,7 @@ A full-stack e-commerce web application built with Spring Boot. Supports three r
 | Backend | Spring Boot 3.3.6, Java 17 |
 | ORM | Spring Data JPA + Hibernate |
 | Security | Spring Security + Spring Session |
-| Frontend | Thymeleaf, HTML5, CSS |
+| Frontend | Thymeleaf, Bootstrap 5.3, Font Awesome 6 |
 | Database | MySQL 8.0 |
 | Build | Maven 3.x |
 

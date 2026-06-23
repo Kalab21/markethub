@@ -129,7 +129,7 @@ App runs at `http://localhost:8081`
 | Framework | Spring Boot | 3.3.6 |
 | ORM | Spring Data JPA + Hibernate | 6.x |
 | Security | Spring Security | 6.x |
-| Frontend | Thymeleaf + Bootstrap 4 | - |
+| Frontend | Thymeleaf + Bootstrap 5.3 + Font Awesome 6 | - |
 | Database | MySQL | 8.0+ |
 | Connector | MySQL Connector/J | 9.1.0 |
 | Build | Maven | 3.x |

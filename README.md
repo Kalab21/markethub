@@ -28,17 +28,21 @@ A full-stack e-commerce web application built with Spring Boot. Supports three r
 
 ## Screenshots
 
-| Sign In | Register |
-|---------|----------|
-| ![Login](screenshots/login.png) | ![Sign Up](screenshots/signup.png) |
+| Sign In | Create Account |
+|---------|----------------|
+| ![Sign In](screenshots/login.png) | ![Create Account](screenshots/signup.png) |
 
-| Product List (Buyer) | Admin — Seller Management |
-|----------------------|--------------------------|
-| ![Products](screenshots/products.png) | ![Admin](screenshots/admin.png) |
+| Home | Buyer Dashboard |
+|------|-----------------|
+| ![Home](screenshots/home.png) | ![Buyer Dashboard](screenshots/dashboard-buyer.png) |
 
-| Shopping Cart |
-|--------------|
-| ![Cart](screenshots/cart.png) |
+| Product Catalogue | Shopping Cart |
+|-------------------|---------------|
+| ![Products](screenshots/products.png) | ![Cart](screenshots/cart.png) |
+
+| Admin Dashboard | User Management |
+|-----------------|-----------------|
+| ![Admin Dashboard](screenshots/dashboard-admin.png) | ![User Management](screenshots/admin.png) |
 
 ## Demo Credentials
 

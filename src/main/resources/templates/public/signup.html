@@ -37,48 +37,40 @@
                     </div>
                     <div class="mb-3">
                         <label for="userName" class="form-label">Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0" style="border-color:var(--mh-border)">
-                                <i class="fa-regular fa-user text-muted" style="font-size:0.85rem"></i>
-                            </span>
+                        <div class="icon-input-wrap">
+                            <i class="fa-regular fa-user icon-input-icon"></i>
                             <input id="userName" th:field="*{userName}" type="text" placeholder="Choose a username"
-                                   class="form-control border-start-0" style="border-color:var(--mh-border)"
+                                   class="form-control icon-input-field"
                                    th:classappend="${#fields.hasErrors('userName')} ? 'is-invalid'"/>
-                            <div class="invalid-feedback" th:errors="*{userName}"></div>
                         </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email Address</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0" style="border-color:var(--mh-border)">
-                                <i class="fa-regular fa-envelope text-muted" style="font-size:0.85rem"></i>
-                            </span>
+                        <div class="icon-input-wrap">
+                            <i class="fa-regular fa-envelope icon-input-icon"></i>
                             <input id="email" th:field="*{email}" type="email" placeholder="you@example.com"
-                                   class="form-control border-start-0" style="border-color:var(--mh-border)"
+                                   class="form-control icon-input-field"
                                    th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"/>
-                            <div class="invalid-feedback" th:errors="*{email}"></div>
                         </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0" style="border-color:var(--mh-border)">
-                                <i class="fa-solid fa-lock text-muted" style="font-size:0.85rem"></i>
-                            </span>
+                        <div class="icon-input-wrap">
+                            <i class="fa-solid fa-lock icon-input-icon"></i>
                             <input id="password" th:field="*{password}" type="password" placeholder="Create a password"
-                                   class="form-control border-start-0" style="border-color:var(--mh-border)"
+                                   class="form-control icon-input-field"
                                    th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"/>
-                            <div class="invalid-feedback" th:errors="*{password}"></div>
                         </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                     </div>
                     <div class="mb-4">
                         <label for="role" class="form-label">Account Type</label>
                         <select id="role" th:field="*{role}" class="form-select"
                                 th:classappend="${#fields.hasErrors('role')} ? 'is-invalid'">
                             <option value="">— Select account type —</option>
-                            <option value="BUYER">
-                                <i class="fa-solid fa-cart-shopping"></i> Buyer — shop products
-                            </option>
+                            <option value="BUYER">Buyer — shop &amp; purchase products</option>
                             <option value="SELLER">Seller — list &amp; sell products (requires admin approval)</option>
                         </select>
                         <div class="invalid-feedback" th:errors="*{role}"></div>
@@ -92,7 +84,7 @@
             </div>
             <div class="auth-card-footer">
                 Already have an account?
-                <a th:href="@{/onlinemarket/public/login}" class="text-primary">Sign In</a>
+                <a th:href="@{/onlinemarket/public/login}" class="text-primary fw-semibold">Sign In</a>
             </div>
         </div>
     </div>

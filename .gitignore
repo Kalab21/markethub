@@ -40,3 +40,7 @@ app_err.txt
 compile_out.txt
 compile_err.txt
 .env
+screenshots/take-screenshots.js
+node_modules/
+package.json
+package-lock.json

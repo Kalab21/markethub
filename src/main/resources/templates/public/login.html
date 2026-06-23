@@ -11,7 +11,7 @@
         <div class="auth-card">
             <div class="auth-card-header">
                 <div class="auth-logo"><span>Market</span>Hub</div>
-                <p>Sign in to your account</p>
+                <p>Welcome back — sign in to continue</p>
             </div>
             <div class="auth-card-body">
                 <div th:if="${param.error}" class="alert alert-danger mb-3" role="alert">
@@ -23,29 +23,27 @@
                     <button type="button" class="btn-close float-end" data-bs-dismiss="alert" style="font-size:0.7rem;"></button>
                 </div>
                 <div th:if="${param.registered}" class="alert alert-success mb-3" role="alert">
-                    <i class="fa-solid fa-circle-check me-2"></i>Account created! You can now sign in.
+                    <i class="fa-solid fa-circle-check me-2"></i>Account created — you can now sign in.
                     <button type="button" class="btn-close float-end" data-bs-dismiss="alert" style="font-size:0.7rem;"></button>
                 </div>
 
                 <form name="formLogin" th:action="@{/onlinemarket/public/login}" method="post">
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0" style="border-color:var(--mh-border)">
-                                <i class="fa-regular fa-user text-muted" style="font-size:0.85rem"></i>
-                            </span>
-                            <input id="username" name="username" type="text" class="form-control border-start-0"
-                                   style="border-color:var(--mh-border)" placeholder="Enter your username" autofocus/>
+                        <div class="icon-input-wrap">
+                            <i class="fa-regular fa-user icon-input-icon"></i>
+                            <input id="username" name="username" type="text"
+                                   class="form-control icon-input-field"
+                                   placeholder="Enter your username" autofocus/>
                         </div>
                     </div>
                     <div class="mb-4">
                         <label for="password" class="form-label">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0" style="border-color:var(--mh-border)">
-                                <i class="fa-solid fa-lock text-muted" style="font-size:0.85rem"></i>
-                            </span>
-                            <input id="password" name="password" type="password" class="form-control border-start-0"
-                                   style="border-color:var(--mh-border)" placeholder="Enter your password"/>
+                        <div class="icon-input-wrap">
+                            <i class="fa-solid fa-lock icon-input-icon"></i>
+                            <input id="password" name="password" type="password"
+                                   class="form-control icon-input-field"
+                                   placeholder="Enter your password"/>
                         </div>
                     </div>
                     <div class="d-grid">
@@ -57,7 +55,7 @@
             </div>
             <div class="auth-card-footer">
                 Don't have an account?
-                <a th:href="@{/onlinemarket/public/signup}" class="text-primary fw-600">Create one free</a>
+                <a th:href="@{/onlinemarket/public/signup}" class="text-primary fw-semibold">Create one free</a>
             </div>
         </div>
     </div>

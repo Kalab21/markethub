@@ -10,13 +10,11 @@
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
 
-    <!-- Bootstrap 5.3 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap 5.3 (self-hosted) -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 
-    <!-- Font Awesome 6 Free -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous">
+    <!-- Font Awesome 6 Free (self-hosted) -->
+    <link rel="stylesheet" th:href="@{/css/fa-all.min.css}">
 
     <!-- Custom styles -->
     <link rel="stylesheet" type="text/css" th:href="@{/css/master.css}">
@@ -32,8 +30,7 @@
 
     <div th:replace="~{fragments/footer :: footer}"></div>
 
-    <!-- Bootstrap 5.3 Bundle (Popper included) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmrXEDHNfc1R7zNbrEx0sBUnElY5" crossorigin="anonymous"></script>
+    <!-- Bootstrap 5.3 Bundle (self-hosted) -->
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

@@ -1,14 +1,25 @@
 <footer class="mh-footer" th:fragment="footer" xmlns:th="http://www.thymeleaf.org">
     <div class="container">
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
-            <div>
-                <span class="footer-brand"><i class="fa-solid fa-store me-1"></i>MarketHub</span>
-                <span class="ms-2">— Buy, sell, and manage with ease.</span>
+        <div class="row align-items-center gy-3">
+            <div class="col-md-4">
+                <div class="footer-brand">
+                    <i class="fa-solid fa-store me-2"></i>MarketHub
+                </div>
+                <div class="mt-1" style="font-size:0.78rem;">Your trusted online marketplace.</div>
             </div>
-            <div class="d-flex align-items-center gap-3">
-                <a th:href="@{/onlinemarket/public/home}">Home</a>
-                <a th:href="@{/onlinemarket/public/login}">Sign In</a>
-                <span>&copy; 2025</span>
+            <div class="col-md-4 text-md-center">
+                <div class="d-flex justify-content-md-center gap-3" style="font-size:0.8rem;">
+                    <a th:href="@{/onlinemarket/public/home}">Home</a>
+                    <a th:href="@{/onlinemarket/public/signup}">Sign Up</a>
+                    <a th:href="@{/onlinemarket/public/login}">Sign In</a>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end" style="font-size:0.78rem;">
+                <div>&copy; 2025 MarketHub. All rights reserved.</div>
+                <div class="mt-1">
+                    <span class="me-3">Privacy Policy</span>
+                    <span>Terms of Service</span>
+                </div>
             </div>
         </div>
     </div>

@@ -58,7 +58,8 @@ public class FormLoginSecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                .requestMatchers("/resources/static/**", "/images/**", "/css/**",
+                .requestMatchers("/resources/static/**", "/images/**",
+                        "/css/**", "/js/**", "/webfonts/**",
                         "/onlinemarket/public/**", "/onlinemarket/public/signup",
                         "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/error").permitAll()
                 .requestMatchers("/", "/onlinemarket").permitAll()

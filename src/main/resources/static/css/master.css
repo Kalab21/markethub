@@ -87,27 +87,37 @@ body {
     border-radius: 20px;
 }
 .mh-navbar .btn-nav-primary {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.45rem 1.2rem;
     border-radius: 6px;
     background: var(--mh-primary);
-    color: #fff;
+    color: #fff !important;
     border: none;
-    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.2px;
+    transition: background 0.15s, box-shadow 0.15s;
 }
-.mh-navbar .btn-nav-primary:hover { background: var(--mh-primary-dark); color: #fff; }
+.mh-navbar .btn-nav-primary:hover {
+    background: var(--mh-primary-dark);
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.5);
+}
 .mh-navbar .btn-nav-outline {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.45rem 1.2rem;
     border-radius: 6px;
-    color: rgba(255,255,255,0.8);
-    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff !important;
+    border: 1.5px solid rgba(255,255,255,0.55);
     background: transparent;
-    transition: border-color 0.15s, color 0.15s;
+    letter-spacing: 0.2px;
+    transition: border-color 0.15s, background 0.15s;
 }
-.mh-navbar .btn-nav-outline:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
+.mh-navbar .btn-nav-outline:hover {
+    border-color: #fff;
+    background: rgba(255,255,255,0.1);
+    color: #fff !important;
+}
 .cart-badge-wrapper { position: relative; display: inline-block; }
 .cart-badge { position: absolute; top: -6px; right: -8px; background: #EF4444; color: #fff; font-size: 0.6rem; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
 
@@ -262,6 +272,20 @@ body {
 /* ===== Badges ===== */
 .badge { border-radius: 20px; font-weight: 600; font-size: 0.7rem; padding: 0.3em 0.7em; }
 
+/* ===== Icon-overlaid inputs (no border hack) ===== */
+.icon-input-wrap { position: relative; }
+.icon-input-icon {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 0.85rem;
+    pointer-events: none;
+    z-index: 4;
+}
+.icon-input-field { padding-left: 2.4rem; }
+
 /* ===== Auth Pages ===== */
 .auth-wrapper {
     min-height: calc(100vh - var(--navbar-height));
@@ -311,8 +335,9 @@ body {
 .mh-footer {
     background: var(--mh-dark);
     color: rgba(255,255,255,0.5);
-    padding: 1.5rem 0;
+    padding: 2rem 0;
     font-size: 0.8125rem;
+    margin-top: auto;
 }
 .mh-footer .footer-brand { font-weight: 700; color: rgba(255,255,255,0.9); font-size: 0.9375rem; }
 .mh-footer a { color: rgba(255,255,255,0.5); text-decoration: none; }

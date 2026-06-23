@@ -38,10 +38,18 @@ public class ShoppingCartController {
 
     @GetMapping("/{cartId}/addproduct/{productId}")
     public String addProductToCart(@PathVariable("cartId") Long cartId, @PathVariable("productId") Long productId){
-        Product product= productService.getProductById(productId);
+        Product product = productService.getProductById(productId);
         shoppingCartService.addProductToShoppingCart(cartId, product);
         return "redirect:/onlinemarket/secured/services/products/list";
+    }
 
+    @GetMapping("/addproduct/{productId}")
+    public String addProductToCartByUser(@PathVariable("productId") Long productId){
+        long uid = userDetailsServiceImpl.getCurrentUser().getUserId();
+        ShoppingCart cart = shoppingCartService.getShoppingCartByBuyer(uid);
+        Product product = productService.getProductById(productId);
+        shoppingCartService.addProductToShoppingCart(cart.getCartId(), product);
+        return "redirect:/onlinemarket/secured/services/products/list";
     }
 
 

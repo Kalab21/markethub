@@ -7,45 +7,98 @@
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <div class="page-header">
-        <h1 class="page-title">
-            <i class="fa-solid fa-receipt me-2 text-primary" style="font-size:1.2rem;"></i>My Orders
-        </h1>
-        <p class="page-subtitle">Track the status of your placed orders.</p>
+
+    <div class="page-header d-flex align-items-start justify-content-between flex-wrap gap-3">
+        <div>
+            <h1 class="page-title">
+                <i class="fa-solid fa-receipt me-2 text-primary" style="font-size:1.2rem;"></i>My Orders
+            </h1>
+            <p class="page-subtitle">Track, manage, and review your order history.</p>
+        </div>
+        <a href="/onlinemarket/secured/services/products/list" class="btn btn-outline-primary btn-icon">
+            <i class="fa-solid fa-boxes-stacked"></i>Continue Shopping
+        </a>
     </div>
+
     <div th:if="${param.ordered}" class="alert alert-success d-flex align-items-center gap-2 mb-3" role="alert">
         <i class="fa-solid fa-circle-check"></i>
         <span>Order placed successfully! Your cart has been cleared.</span>
     </div>
+
     <hr class="section-divider"/>
 
+    <!-- Orders list -->
     <div th:if="${orders != null and !orders.isEmpty()}">
-        <div class="table-responsive">
-            <table class="table mh-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="o, iterStat : ${orders}">
-                        <td th:text="${iterStat.count}"></td>
-                        <td>
-                            <span class="badge"
-                                  th:classappend="${o.orderStatus == 'Pending'} ? 'bg-warning text-dark' : 'bg-success'"
+
+        <div class="d-flex flex-column gap-3 mb-4">
+            <div th:each="o, iterStat : ${orders}" class="card shadow-sm border-0" style="border-radius:var(--mh-radius);">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+
+                        <!-- Left: order info -->
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;"
+                                 th:classappend="${o.orderStatus == 'Pending'} ? 'bg-warning bg-opacity-15 text-warning' :
+                                                (${o.orderStatus == 'Cancelled'} ? 'bg-danger bg-opacity-10 text-danger' : 'bg-success bg-opacity-10 text-success')">
+                                <i class="fa-solid"
+                                   th:classappend="${o.orderStatus == 'Pending'} ? 'fa-clock' :
+                                                  (${o.orderStatus == 'Cancelled'} ? 'fa-xmark' : 'fa-check')"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold" style="font-size:0.95rem;" th:text="'Order #' + ${o.orderId}"></div>
+                                <div class="text-muted" style="font-size:0.8125rem;" th:text="${o.createdAt}"></div>
+                            </div>
+                        </div>
+
+                        <!-- Right: status + price + actions -->
+                        <div class="d-flex align-items-center flex-wrap gap-2">
+                            <span class="badge px-3 py-2"
+                                  th:classappend="${o.orderStatus == 'Pending'} ? 'bg-warning text-dark' :
+                                                 (${o.orderStatus == 'Cancelled'} ? 'bg-danger' : 'bg-success')"
+                                  style="font-size:0.75rem;"
                                   th:text="${o.orderStatus}"></span>
-                        </td>
-                        <td th:text="${o.createdAt}"></td>
-                        <td th:text="'$' + ${#numbers.formatDecimal(o.price, 1, 2)}"></td>
-                    </tr>
-                </tbody>
-            </table>
+
+                            <span class="fw-bold text-dark" style="font-size:1rem;min-width:80px;text-align:right;"
+                                  th:text="'$' + ${#numbers.formatDecimal(o.price, 1, 2)}"></span>
+
+                            <!-- Cancel (Pending only) -->
+                            <a th:if="${o.orderStatus == 'Pending'}"
+                               th:href="@{|/orders/cancel/${o.orderId}/user/${currentUser.userId}|}"
+                               class="btn btn-sm btn-outline-warning btn-icon"
+                               onclick="return confirm('Cancel this order?')">
+                                <i class="fa-solid fa-ban"></i>Cancel
+                            </a>
+
+                            <!-- Delete -->
+                            <a th:href="@{|/orders/delete/${o.orderId}/user/${currentUser.userId}|}"
+                               class="btn btn-sm btn-outline-danger btn-icon"
+                               onclick="return confirm('Delete this order from your history?')">
+                                <i class="fa-solid fa-trash"></i>Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Summary footer -->
+        <div class="card border-0 shadow-sm" style="border-radius:var(--mh-radius);background:var(--mh-surface);">
+            <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="text-muted" style="font-size:0.875rem;">
+                    <i class="fa-solid fa-layer-group me-1"></i>
+                    <span th:text="${orders.size()} + ' order(s) in your history'"></span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted" style="font-size:0.875rem;">Total spent</span>
+                    <span class="fw-bold text-dark" style="font-size:1.25rem;"
+                          th:text="'$' + ${#numbers.formatDecimal(totalSpent, 1, 2)}"></span>
+                </div>
+            </div>
+        </div>
+
     </div>
 
+    <!-- Empty state -->
     <div th:if="${orders == null or orders.isEmpty()}" class="empty-state">
         <i class="fa-solid fa-receipt d-block"></i>
         <h5>No orders yet</h5>
@@ -54,6 +107,7 @@
             <i class="fa-solid fa-boxes-stacked"></i>Browse Products
         </a>
     </div>
+
 </div>
 </body>
 </html>

@@ -94,6 +94,17 @@ class UserServiceImplTest {
     }
 
     @Test
+    void registerUser_adminRole_isRejected() {
+        SignUp signUp = new SignUp("Eve", "Admin", "eve", "eve@test.com", "password123", "ADMIN");
+        when(userRepository.existsByUserName("eve")).thenReturn(false);
+        when(userRepository.existsByEmail("eve@test.com")).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class, () -> userService.registerUser(signUp));
+        verify(roleRepository, never()).findByRoleType(any());
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
     void approveSeller_success() {
         User seller = new User();
         seller.setUserId(1L);

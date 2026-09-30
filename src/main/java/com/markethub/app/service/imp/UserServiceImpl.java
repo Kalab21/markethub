@@ -19,10 +19,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Set<String> SELF_REGISTRATION_ROLES = Set.of("BUYER", "SELLER");
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -84,7 +87,11 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(signUp.getEmail())) {
             throw new DuplicateResourceException("Email already registered: " + signUp.getEmail());
         }
-        String roleType = "ROLE_" + signUp.getRole().toUpperCase();
+        String requestedRole = signUp.getRole() == null ? "" : signUp.getRole().trim().toUpperCase();
+        if (!SELF_REGISTRATION_ROLES.contains(requestedRole)) {
+            throw new IllegalArgumentException("Account type must be BUYER or SELLER");
+        }
+        String roleType = "ROLE_" + requestedRole;
         Role role = roleRepository.findByRoleType(roleType).orElseGet(() -> {
             Role newRole = new Role();
             newRole.setRoleType(roleType);

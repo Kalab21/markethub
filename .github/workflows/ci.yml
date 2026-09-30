@@ -24,6 +24,9 @@ jobs:
       - name: Build and run tests with coverage
         run: mvn clean verify
 
+      - name: Build Docker image
+        run: docker build -t markethub:ci .
+
       - name: Upload test reports
         uses: actions/upload-artifact@v4
         if: failure()

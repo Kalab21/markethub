@@ -1,17 +1,18 @@
+# Local demo stack. Values default to the LOCAL-DEMO settings in .env.example.
 services:
   db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: markethub_db
-      MYSQL_USER: markethub_user
-      MYSQL_PASSWORD: markethub_pass
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-markethub_db}
+      MYSQL_USER: ${MYSQL_USER:-markethub_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-markethub_pass}
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -23,9 +24,9 @@ services:
     environment:
       MYSQLHOST: db
       MYSQLPORT: 3306
-      MYSQLDATABASE: markethub_db
-      MYSQLUSER: markethub_user
-      MYSQLPASSWORD: markethub_pass
+      MYSQLDATABASE: ${MYSQL_DATABASE:-markethub_db}
+      MYSQLUSER: ${MYSQL_USER:-markethub_user}
+      MYSQLPASSWORD: ${MYSQL_PASSWORD:-markethub_pass}
       SPRING_PROFILES_ACTIVE: prod
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     depends_on:

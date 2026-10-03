@@ -130,13 +130,7 @@ To use your own MySQL instead, set `MYSQLHOST`, `MYSQLPORT`, `MYSQLDATABASE`,
 
 ### Demo accounts
 
-**Synthetic local demo accounts only**, seeded on first start together with six sample products:
-
-| Role | Username | Password |
-|------|----------|----------|
-| Admin | `admin` | `password` |
-| Seller (approved) | `seller` | `password` |
-| Buyer | `buyer` | `password` |
+Synthetic Admin, Seller and Buyer accounts are seeded automatically on first start, together with six sample products, for local testing. Demo access details are in [PROJECT.md](PROJECT.md#demo-accounts).
 
 ### Useful URLs
 
@@ -154,7 +148,7 @@ and a local MySQL database. It is not a production commerce deployment.
   early prototype for stored payment methods but are not used by checkout.
 - **Authorization is role-based, not fully ownership-based.** Several order, cart, user,
   address, review and product API endpoints only require a logged-in user.
-- **Seller approval is an admin workflow** whose status is not yet checked before listing products.
+- **Seller approval exists** as an admin workflow (new sellers register as pending and an admin approves them), but the approved status is not yet enforced before a seller can list products.
 - The credentials in `docker-compose.yml` and `.env.example` are local demo defaults, not secrets.
 
 ## Technical documentation

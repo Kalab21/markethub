@@ -113,6 +113,20 @@ These are local demo values; `.env.example` documents the same values for Docker
 `DataLoader` seeds the ADMIN/SELLER/BUYER roles, three demo users (`admin`, `seller`, `buyer`,
 password `password`) and six sample products on first start.
 
+## Demo accounts
+
+Synthetic local demo accounts only, created by `DataLoader` on first start. They exist for
+local testing and are not credentials for anything real.
+
+| Role | Username | Password |
+|------|----------|----------|
+| Admin | `admin` | `password` |
+| Seller (approved) | `seller` | `password` |
+| Buyer | `buyer` | `password` |
+
+New accounts can self-register as Buyer or Seller; a new Seller starts as pending until an
+Admin approves it.
+
 ## Testing
 
 39 tests across 7 test classes using JUnit 5, Mockito, MockMvc and H2 in-memory — no MySQL required for CI.

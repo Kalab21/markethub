@@ -62,19 +62,21 @@
                                   th:text="'$' + ${#numbers.formatDecimal(o.price, 1, 2)}"></span>
 
                             <!-- Cancel (Pending only) -->
-                            <a th:if="${o.orderStatus == 'Pending'}"
-                               th:href="@{|/orders/cancel/${o.orderId}/user/${currentUser.userId}|}"
-                               class="btn btn-sm btn-outline-warning btn-icon"
-                               onclick="return confirm('Cancel this order?')">
-                                <i class="fa-solid fa-ban"></i>Cancel
-                            </a>
+                            <form th:if="${o.orderStatus == 'Pending'}"
+                                  th:action="@{|/orders/${o.orderId}/cancel|}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-warning btn-icon"
+                                        onclick="return confirm('Cancel this order?')">
+                                    <i class="fa-solid fa-ban"></i>Cancel
+                                </button>
+                            </form>
 
                             <!-- Delete -->
-                            <a th:href="@{|/orders/delete/${o.orderId}/user/${currentUser.userId}|}"
-                               class="btn btn-sm btn-outline-danger btn-icon"
-                               onclick="return confirm('Delete this order from your history?')">
-                                <i class="fa-solid fa-trash"></i>Delete
-                            </a>
+                            <form th:action="@{|/orders/${o.orderId}/delete|}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger btn-icon"
+                                        onclick="return confirm('Delete this order from your history?')">
+                                    <i class="fa-solid fa-trash"></i>Delete
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

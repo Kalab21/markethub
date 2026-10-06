@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("update/{sellerId}")
+    @PostMapping("/{sellerId}/approve")
     public String approveSeller(@PathVariable("sellerId") long sellerId) {
         userService.approveSeller(sellerId);
         return "redirect:/onlinemarket/secured/services/users/sellers";

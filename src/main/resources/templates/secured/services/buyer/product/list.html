@@ -39,10 +39,11 @@
                     </div>
                 </div>
                 <div class="product-footer">
-                    <a th:href="@{|/onlinemarket/cart/addproduct/${product.productId}|}"
-                       class="btn btn-primary w-100 btn-icon">
-                        <i class="fa-solid fa-cart-plus"></i>Add to Cart
-                    </a>
+                    <form th:action="@{|/onlinemarket/cart/products/${product.productId}/add|}" method="post">
+                        <button type="submit" class="btn btn-primary w-100 btn-icon">
+                            <i class="fa-solid fa-cart-plus"></i>Add to Cart
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

@@ -45,11 +45,13 @@
                     </span>
                 </td>
                 <td>
-                    <a th:if="${!user.approvedSeller}"
-                       th:href="@{|/onlinemarket/secured/services/users/update/${user.userId}|}"
-                       class="btn btn-sm btn-success btn-icon">
-                        <i class="fa-solid fa-user-check"></i>Approve
-                    </a>
+                    <form th:if="${!user.approvedSeller}"
+                          th:action="@{|/onlinemarket/secured/services/users/${user.userId}/approve|}"
+                          method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-success btn-icon">
+                            <i class="fa-solid fa-user-check"></i>Approve
+                        </button>
+                    </form>
                 </td>
             </tr>
             <tr th:if="${sellers == null or sellers.size() == 0}">

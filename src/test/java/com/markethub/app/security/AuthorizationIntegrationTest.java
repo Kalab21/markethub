@@ -136,16 +136,16 @@ class AuthorizationIntegrationTest {
 
     @Test
     void sellerCannotApproveThemselves() throws Exception {
-        mvc.perform(get("/onlinemarket/secured/services/users/update/" + pendingSeller.getUserId())
-                        .with(as(pendingSeller)))
+        mvc.perform(post("/onlinemarket/secured/services/users/" + pendingSeller.getUserId() + "/approve")
+                        .with(as(pendingSeller)).with(csrf()))
                 .andExpect(status().isForbidden());
         assertTrue(!users.findById(pendingSeller.getUserId()).orElseThrow().isApprovedSeller());
     }
 
     @Test
     void adminCanApproveSeller() throws Exception {
-        mvc.perform(get("/onlinemarket/secured/services/users/update/" + pendingSeller.getUserId())
-                        .with(as(admin)))
+        mvc.perform(post("/onlinemarket/secured/services/users/" + pendingSeller.getUserId() + "/approve")
+                        .with(as(admin)).with(csrf()))
                 .andExpect(status().is3xxRedirection());
         assertTrue(users.findById(pendingSeller.getUserId()).orElseThrow().isApprovedSeller());
     }
@@ -257,11 +257,9 @@ class AuthorizationIntegrationTest {
 
     @Test
     void buyerCannotCancelOrDeleteAnotherBuyersOrder() throws Exception {
-        mvc.perform(get("/orders/cancel/" + buyerOrder.getOrderId() + "/user/" + otherBuyer.getUserId())
-                        .with(as(otherBuyer)))
+        mvc.perform(post("/orders/" + buyerOrder.getOrderId() + "/cancel").with(as(otherBuyer)).with(csrf()))
                 .andExpect(status().isForbidden());
-        mvc.perform(get("/orders/delete/" + buyerOrder.getOrderId() + "/user/" + otherBuyer.getUserId())
-                        .with(as(otherBuyer)))
+        mvc.perform(post("/orders/" + buyerOrder.getOrderId() + "/delete").with(as(otherBuyer)).with(csrf()))
                 .andExpect(status().isForbidden());
         Order unchanged = orders.findById(buyerOrder.getOrderId()).orElseThrow();
         assertEquals("Pending", unchanged.getOrderStatus());
@@ -275,7 +273,7 @@ class AuthorizationIntegrationTest {
 
     @Test
     void ownerCanCancelOwnOrder() throws Exception {
-        mvc.perform(get("/orders/cancel/" + buyerOrder.getOrderId() + "/user/" + buyer.getUserId()).with(as(buyer)))
+        mvc.perform(post("/orders/" + buyerOrder.getOrderId() + "/cancel").with(as(buyer)).with(csrf()))
                 .andExpect(status().is3xxRedirection());
         assertEquals("Cancelled", orders.findById(buyerOrder.getOrderId()).orElseThrow().getOrderStatus());
     }
@@ -309,12 +307,6 @@ class AuthorizationIntegrationTest {
                 .andExpect(status().isForbidden());
         mvc.perform(get("/onlinemarket/cart/" + otherBuyer.getUserId()).with(as(buyer)))
                 .andExpect(status().isForbidden());
-        mvc.perform(get("/onlinemarket/cart/" + victimCart + "/addproduct/" + ownedProduct.getProductId())
-                        .with(as(buyer)))
-                .andExpect(status().isForbidden());
-        mvc.perform(get("/onlinemarket/cart/" + victimCart + "/checkout/" + otherBuyer.getUserId())
-                        .with(as(buyer)))
-                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -327,5 +319,214 @@ class AuthorizationIntegrationTest {
     void sellerCannotUseCarts() throws Exception {
         mvc.perform(get("/api/cart/buyer/" + buyer.getUserId()).with(as(approvedSeller)))
                 .andExpect(status().isForbidden());
+    }
+
+    // ---- HTTP methods and CSRF ---------------------------------------------------------------
+
+    private int cartSize(User u) {
+        return carts.findById(u.getShoppingCart().getCartId()).orElseThrow().getProducts().size();
+    }
+
+    private void putInCart(User u, Product p) {
+        ShoppingCart c = carts.findById(u.getShoppingCart().getCartId()).orElseThrow();
+        c.getProducts().add(p);
+        carts.save(c);
+    }
+
+    private long ordersOf(User u) {
+        return orders.findAll().stream().filter(o -> o.getOwner().getUserId().equals(u.getUserId())).count();
+    }
+
+    @Test
+    void formerGetMutationUrlsNoLongerChangeState() throws Exception {
+        putInCart(buyer, ownedProduct);
+        Long cartId = buyer.getShoppingCart().getCartId();
+        long ordersBefore = orders.count();
+        long productsBefore = products.count();
+        String[] urls = {
+                "/orders/cancel/" + buyerOrder.getOrderId() + "/user/" + buyer.getUserId(),
+                "/orders/delete/" + buyerOrder.getOrderId() + "/user/" + buyer.getUserId(),
+                "/orders/" + buyerOrder.getOrderId() + "/cancel",
+                "/orders/" + buyerOrder.getOrderId() + "/delete",
+                "/onlinemarket/cart/addproduct/" + ownedProduct.getProductId(),
+                "/onlinemarket/cart/" + cartId + "/addproduct/" + ownedProduct.getProductId(),
+                "/onlinemarket/cart/" + cartId + "/delete/" + ownedProduct.getProductId(),
+                "/onlinemarket/cart/" + cartId + "/checkout/" + buyer.getUserId(),
+                "/onlinemarket/cart/checkout",
+                "/onlinemarket/cart/products/" + ownedProduct.getProductId() + "/remove",
+        };
+        for (String url : urls) {
+            mvc.perform(get(url).with(as(buyer))).andExpect(status().is4xxClientError());
+        }
+        String[] sellerUrls = {
+                "/onlinemarket/secured/services/products/delete/" + ownedProduct.getProductId(),
+                "/onlinemarket/secured/services/products/" + ownedProduct.getProductId() + "/delete",
+        };
+        for (String url : sellerUrls) {
+            mvc.perform(get(url).with(as(approvedSeller))).andExpect(status().is4xxClientError());
+        }
+        String[] adminUrls = {
+                "/onlinemarket/secured/services/users/update/" + pendingSeller.getUserId(),
+                "/onlinemarket/secured/services/users/" + pendingSeller.getUserId() + "/approve",
+        };
+        for (String url : adminUrls) {
+            mvc.perform(get(url).with(as(admin))).andExpect(status().is4xxClientError());
+        }
+        assertEquals("Pending", orders.findById(buyerOrder.getOrderId()).orElseThrow().getOrderStatus());
+        assertEquals(ordersBefore, orders.count());
+        assertEquals(productsBefore, products.count());
+        assertEquals(1, cartSize(buyer));
+        assertTrue(!users.findById(pendingSeller.getUserId()).orElseThrow().isApprovedSeller());
+    }
+
+    @Test
+    void getLogoutDoesNotEndTheSession() throws Exception {
+        mvc.perform(get("/onlinemarket/public/logout").with(as(buyer))).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void mutationsWithoutCsrfTokenAreRejected() throws Exception {
+        putInCart(buyer, ownedProduct);
+        String pid = String.valueOf(ownedProduct.getProductId());
+        mvc.perform(post("/orders/" + buyerOrder.getOrderId() + "/cancel").with(as(buyer)))
+                .andExpect(status().isForbidden());
+        mvc.perform(post("/orders/" + buyerOrder.getOrderId() + "/delete").with(as(buyer)))
+                .andExpect(status().isForbidden());
+        mvc.perform(post("/onlinemarket/cart/products/" + pid + "/add").with(as(buyer)))
+                .andExpect(status().isForbidden());
+        mvc.perform(post("/onlinemarket/cart/products/" + pid + "/remove").with(as(buyer)))
+                .andExpect(status().isForbidden());
+        mvc.perform(post("/onlinemarket/cart/checkout").with(as(buyer)))
+                .andExpect(status().isForbidden());
+        mvc.perform(post("/onlinemarket/secured/services/products/" + pid + "/delete").with(as(approvedSeller)))
+                .andExpect(status().isForbidden());
+        mvc.perform(post("/onlinemarket/secured/services/users/" + pendingSeller.getUserId() + "/approve")
+                        .with(as(admin)))
+                .andExpect(status().isForbidden());
+        mvc.perform(post("/onlinemarket/public/logout").with(as(buyer)))
+                .andExpect(status().isForbidden());
+        assertEquals("Pending", orders.findById(buyerOrder.getOrderId()).orElseThrow().getOrderStatus());
+        assertEquals(1, cartSize(buyer));
+        assertTrue(products.existsById(ownedProduct.getProductId()));
+        assertTrue(!users.findById(pendingSeller.getUserId()).orElseThrow().isApprovedSeller());
+    }
+
+    @Test
+    void buyerAddsAndRemovesOnlyInOwnCart() throws Exception {
+        String pid = String.valueOf(ownedProduct.getProductId());
+        mvc.perform(post("/onlinemarket/cart/products/" + pid + "/add").with(as(buyer)).with(csrf()))
+                .andExpect(status().is3xxRedirection());
+        assertEquals(1, cartSize(buyer));
+        assertEquals(0, cartSize(otherBuyer));
+        mvc.perform(post("/onlinemarket/cart/products/" + pid + "/remove").with(as(buyer)).with(csrf()))
+                .andExpect(status().is3xxRedirection());
+        assertEquals(0, cartSize(buyer));
+    }
+
+    @Test
+    void sellerCannotUseBuyerCartActions() throws Exception {
+        String pid = String.valueOf(ownedProduct.getProductId());
+        mvc.perform(post("/onlinemarket/cart/products/" + pid + "/add").with(as(approvedSeller)).with(csrf()))
+                .andExpect(status().isForbidden());
+        mvc.perform(post("/onlinemarket/cart/checkout").with(as(approvedSeller)).with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void checkoutOrdersBelongToTheCallerAndEmptyTheirCart() throws Exception {
+        putInCart(buyer, ownedProduct);
+        putInCart(otherBuyer, ownedProduct);
+        long victimBefore = ordersOf(otherBuyer);
+        mvc.perform(post("/onlinemarket/cart/checkout").with(as(buyer)).with(csrf()))
+                .andExpect(status().is3xxRedirection());
+        assertEquals(0, cartSize(buyer));
+        assertEquals(1, cartSize(otherBuyer));
+        assertEquals(2, ordersOf(buyer));
+        assertEquals(victimBefore, ordersOf(otherBuyer));
+    }
+
+    @Test
+    void checkoutIgnoresIdentityInTheRequest() throws Exception {
+        putInCart(buyer, ownedProduct);
+        mvc.perform(post("/onlinemarket/cart/checkout").with(as(buyer)).with(csrf())
+                        .param("userId", String.valueOf(otherBuyer.getUserId()))
+                        .param("cartId", String.valueOf(otherBuyer.getShoppingCart().getCartId())))
+                .andExpect(status().is3xxRedirection());
+        assertEquals(0, ordersOf(otherBuyer));
+        assertEquals(2, ordersOf(buyer));
+    }
+
+    @Test
+    void ownerCanDeleteOwnOrderWithCsrf() throws Exception {
+        mvc.perform(post("/orders/" + buyerOrder.getOrderId() + "/delete").with(as(buyer)).with(csrf()))
+                .andExpect(status().is3xxRedirection());
+        assertTrue(!orders.existsById(buyerOrder.getOrderId()));
+    }
+
+    @Test
+    void sellerDeleteFormRespectsApprovalAndOwnership() throws Exception {
+        String url = "/onlinemarket/secured/services/products/" + ownedProduct.getProductId() + "/delete";
+        mvc.perform(post(url).with(as(otherSeller)).with(csrf())).andExpect(status().isForbidden());
+        mvc.perform(post(url).with(as(pendingSeller)).with(csrf())).andExpect(status().isForbidden());
+        mvc.perform(post(url).with(as(buyer)).with(csrf())).andExpect(status().isForbidden());
+        assertTrue(products.existsById(ownedProduct.getProductId()));
+        mvc.perform(post(url).with(as(approvedSeller)).with(csrf())).andExpect(status().is3xxRedirection());
+        assertTrue(!products.existsById(ownedProduct.getProductId()));
+    }
+
+    @Test
+    void adminDeletesAnySellersProductThroughTheApi() throws Exception {
+        mvc.perform(delete("/api/products/" + ownedProduct.getProductId()).with(as(admin)))
+                .andExpect(status().isForbidden()); // no CSRF token
+        assertTrue(products.existsById(ownedProduct.getProductId()));
+        mvc.perform(delete("/api/products/" + ownedProduct.getProductId()).with(as(admin)).with(csrf()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void approvingASellerNeedsAdminAndCsrf() throws Exception {
+        String url = "/onlinemarket/secured/services/users/" + pendingSeller.getUserId() + "/approve";
+        mvc.perform(post(url).with(as(buyer)).with(csrf())).andExpect(status().isForbidden());
+        mvc.perform(post(url).with(as(approvedSeller)).with(csrf())).andExpect(status().isForbidden());
+        mvc.perform(post(url).with(as(admin))).andExpect(status().isForbidden());
+        assertTrue(!users.findById(pendingSeller.getUserId()).orElseThrow().isApprovedSeller());
+    }
+
+    @Test
+    void logoutWorksWithPostAndCsrf() throws Exception {
+        mvc.perform(post("/onlinemarket/public/logout").with(as(buyer)).with(csrf()))
+                .andExpect(status().is3xxRedirection());
+    }
+
+    // ---- GET stays read-only -----------------------------------------------------------------
+
+    @Test
+    void viewingACartDoesNotCreateOne() throws Exception {
+        User cartless = account("nocart-" + UUID.randomUUID().toString().substring(0, 6), "ROLE_BUYER", false, false);
+        long cartsBefore = carts.count();
+        mvc.perform(get("/onlinemarket/cart/" + cartless.getUserId()).with(as(cartless)))
+                .andExpect(status().isOk());
+        assertEquals(cartsBefore, carts.count());
+        assertTrue(users.findById(cartless.getUserId()).orElseThrow().getShoppingCart() == null);
+    }
+
+    @Test
+    void addingToCartCreatesMissingCartForTheCaller() throws Exception {
+        User cartless = account("nocart2-" + UUID.randomUUID().toString().substring(0, 6), "ROLE_BUYER", false, false);
+        mvc.perform(post("/onlinemarket/cart/products/" + ownedProduct.getProductId() + "/add")
+                        .with(as(cartless)).with(csrf()))
+                .andExpect(status().is3xxRedirection());
+        User reloaded = users.findById(cartless.getUserId()).orElseThrow();
+        assertEquals(1, reloaded.getShoppingCart().getProducts().size());
+    }
+
+    @Test
+    void readPagesStillRenderForTheirRoles() throws Exception {
+        mvc.perform(get("/onlinemarket/secured/services/products/list").with(as(buyer))).andExpect(status().isOk());
+        mvc.perform(get("/orders/user/" + buyer.getUserId()).with(as(buyer))).andExpect(status().isOk());
+        mvc.perform(get("/onlinemarket/cart/" + buyer.getUserId()).with(as(buyer))).andExpect(status().isOk());
+        mvc.perform(get("/onlinemarket/secured/services/products/my-products/" + approvedSeller.getUserId())
+                        .with(as(approvedSeller))).andExpect(status().isOk());
+        mvc.perform(get("/onlinemarket/secured/services/users/sellers").with(as(admin))).andExpect(status().isOk());
     }
 }

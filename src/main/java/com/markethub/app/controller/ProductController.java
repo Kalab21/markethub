@@ -110,7 +110,7 @@ public class ProductController {
         return "redirect:/onlinemarket/secured/services/products/my-products/" + cu.getUserId();
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/{id}/delete")
     public String deleteProduct(@PathVariable("id") long id) {
         accessGuard.requireApprovedSellerOrAdmin();
         com.markethub.app.model.User currentUser = userDetailsServiceImpl.getCurrentUser();

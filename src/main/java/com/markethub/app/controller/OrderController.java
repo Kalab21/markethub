@@ -36,8 +36,8 @@ public class OrderController {
         return "secured/services/buyer/order/orderPage";
     }
 
-    @GetMapping("/cancel/{orderId}/user/{userId}")
-    public String cancelOrder(@PathVariable Long orderId, @PathVariable Long userId) {
+    @PostMapping("/{orderId}/cancel")
+    public String cancelOrder(@PathVariable Long orderId) {
         Order order = orderService.getOrderById(orderId);
         accessGuard.requireOwnerOrAdmin(order.getOwner());
         if ("Pending".equals(order.getOrderStatus())) {
@@ -47,8 +47,8 @@ public class OrderController {
         return "redirect:/orders/user/" + order.getOwner().getUserId();
     }
 
-    @GetMapping("/delete/{orderId}/user/{userId}")
-    public String deleteOrder(@PathVariable Long orderId, @PathVariable Long userId) {
+    @PostMapping("/{orderId}/delete")
+    public String deleteOrder(@PathVariable Long orderId) {
         Order order = orderService.getOrderById(orderId);
         accessGuard.requireOwnerOrAdmin(order.getOwner());
         orderService.deleteOrderById(orderId);

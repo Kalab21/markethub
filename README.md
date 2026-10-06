@@ -19,7 +19,7 @@ place orders. It is a server-rendered Spring MVC + Thymeleaf application backed 
 - **Seller approval** — new sellers register as *pending*; only an admin can approve them
 - **Cart-to-order flow** — cart totals, checkout into a `Pending` order, cancel and order history
 - **Server-rendered UI** — Thymeleaf layouts with self-hosted Bootstrap 5.3 and Font Awesome 6
-- **Automated tests + CI** — 62 JUnit 5 tests on H2, Maven + Docker image build on every push and PR
+- **Automated tests + CI** — 77 JUnit 5 tests on H2, Maven + Docker image build on every push and PR
 
 ## Product experience
 
@@ -75,18 +75,18 @@ Concrete controls in the code:
 - The owner of a new product or order is always the signed-in user, never a value from the request body; unauthorized access returns `403`
 - Role gates cover the user-management, address, payment and review endpoints (admin only)
 
-Order cancel and delete links are still plain `GET` requests, so CSRF tokens do not cover them. See [Project scope](#project-scope).
+State-changing web actions (cart, checkout, order cancel/delete, product delete, seller approval, sign out) are CSRF-protected `POST` requests, and REST mutations use `POST`/`PUT`/`DELETE`. `GET` requests only read.
 
 ## Testing
 
-62 tests across 8 test classes, run with `mvn clean verify` against an in-memory H2 database:
+77 tests across 8 test classes, run with `mvn clean verify` against an in-memory H2 database:
 
 | Type | Classes | Tests |
 |------|---------|-------|
 | Service unit tests (Mockito) | `UserServiceImplTest`, `ProductServiceImplTest`, `ShoppingCartServiceImplTest` | 19 |
 | Repository tests (`@DataJpaTest`, H2) | `UserRepositoryIntegrationTest`, `ProductRepositoryIntegrationTest` | 14 |
 | Controller tests (`@WebMvcTest`, MockMvc) | `ProductApiControllerTest` | 5 |
-| Authorization tests (`@SpringBootTest`, MockMvc, real security filter chain) | `AuthorizationIntegrationTest` | 23 |
+| Authorization, ownership and CSRF tests (`@SpringBootTest`, MockMvc, real security filter chain) | `AuthorizationIntegrationTest` | 38 |
 | Application context | `MarketHubApplicationTests` | 1 |
 
 GitHub Actions runs the full Maven build, then builds the Docker image. JaCoCo coverage is uploaded as a build artifact.
@@ -148,7 +148,6 @@ and a local MySQL database. It is not a production commerce deployment.
 - **Payments are not processed.** Checkout creates a `Pending` order from the cart total;
   no payment provider is integrated. A `Payment` entity and CRUD endpoints exist as an
   early prototype for stored payment methods but are not used by checkout.
-- **Order cancel and delete use `GET` links.** They are ownership-checked but not CSRF-protected; a production version would make them `POST` or `DELETE` requests.
 - The credentials in `docker-compose.yml` and `.env.example` are local demo defaults, not secrets.
 
 ## Technical documentation

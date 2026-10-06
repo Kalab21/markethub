@@ -42,12 +42,24 @@ Self-registration only accepts `BUYER` or `SELLER`; any other requested role is 
 **Resource-level rules** (enforced by `AccessGuard` in the controllers, on top of the URL rules):
 
 - Creating, editing or deleting a product (web and API) requires an approved seller; admins are exempt.
-- A seller can only change or list their own products; an update keeps the original seller.
+- A seller can only manage products they own, and an update keeps the original seller; public catalogue reads remain available where intended.
 - A buyer can only read, cancel or delete their own orders and use their own cart. The owner of a new order is the signed-in user, whatever the request body says.
 - User-management, address, payment and review endpoints are admin only.
 - Refusals throw `AccessDeniedException`, which the global handler returns as `403`.
 
-**Remaining gap** (demo scope): order cancel and delete are `GET` links, so CSRF tokens do not cover them.
+**HTTP methods:** `GET` is read only. Web mutations are `POST` forms that carry the Spring Security CSRF token:
+
+| Action | Route |
+|---|---|
+| Add to cart | `POST /onlinemarket/cart/products/{productId}/add` |
+| Remove from cart | `POST /onlinemarket/cart/products/{productId}/remove` |
+| Checkout | `POST /onlinemarket/cart/checkout` |
+| Cancel / delete order | `POST /orders/{orderId}/cancel`, `POST /orders/{orderId}/delete` |
+| Delete product | `POST /onlinemarket/secured/services/products/{id}/delete` |
+| Approve seller | `POST /onlinemarket/secured/services/users/{sellerId}/approve` |
+| Sign out | `POST /onlinemarket/public/logout` |
+
+The buyer and the cart come from the signed-in session, not from the URL. Viewing a cart never creates one; a missing cart is created when the buyer adds the first product (new accounts get one at registration).
 
 ## Domain Model
 
@@ -79,7 +91,7 @@ Review
 URL patterns locked down at the security config level, with method-level `@PreAuthorize` for admin endpoints. Seller approval requires explicit ADMIN action.
 
 **Seller Approval Workflow**
-New SELLER registrations are created with `approvedSeller=false` and appear as *Pending* on the admin seller list until an ADMIN approves them. The flag is not yet checked when a seller creates products.
+New SELLER registrations are created with `approvedSeller=false` and appear as *Pending* on the admin seller list until an ADMIN approves them. Only approved sellers can create, edit or delete products; admins are exempt.
 
 **Checkout and Payments**
 Checkout sums the cart, saves an `Order` with status `Pending` and clears the cart. No payment provider is integrated and no payment is taken. The `Payment` entity and `/payment` endpoints are an unused prototype for stored payment methods.
@@ -134,7 +146,7 @@ Admin approves it.
 
 ## Testing
 
-62 tests across 8 test classes using JUnit 5, Mockito, MockMvc and H2 in-memory — no MySQL required for CI.
+77 tests across 8 test classes using JUnit 5, Mockito, MockMvc and H2 in-memory — no MySQL required for CI.
 
 ```
 UserServiceImplTest                8 tests  (register, role whitelist, approve seller, CRUD)
@@ -144,7 +156,7 @@ ProductApiControllerTest           5 tests  (@WebMvcTest + MockMvc, service mock
 ProductRepositoryIntegrationTest   6 tests  (@DataJpaTest on H2)
 UserRepositoryIntegrationTest      8 tests  (@DataJpaTest on H2)
 MarketHubApplicationTests          1 test   (@SpringBootTest context load)
-AuthorizationIntegrationTest      23 tests  (@SpringBootTest + MockMvc, real filter chain: roles, seller approval, ownership)
+AuthorizationIntegrationTest      38 tests  (@SpringBootTest + MockMvc, real filter chain: roles, seller approval, ownership, CSRF, HTTP methods)
 ```
 
 The suite does not run against MySQL. Authorization is exercised through the real security filter chain against H2.

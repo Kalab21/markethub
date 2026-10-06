@@ -69,7 +69,7 @@ public class FormLoginSecurityConfig {
                 .requestMatchers("/onlinemarket/secured/services/products/new-product",
                         "/onlinemarket/secured/services/products/update-product/**",
                         "/onlinemarket/secured/services/products/save-product",
-                        "/onlinemarket/secured/services/products/delete/**",
+                        "/onlinemarket/secured/services/products/*/delete",
                         "/onlinemarket/secured/services/products/my-products/**").hasRole("SELLER")
                 .requestMatchers(HttpMethod.POST, "/api/products").hasAnyRole("SELLER", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyRole("SELLER", "ADMIN")
@@ -89,7 +89,7 @@ public class FormLoginSecurityConfig {
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutRequestMatcher(new AntPathRequestMatcher("/onlinemarket/public/logout"))
+                .logoutRequestMatcher(new AntPathRequestMatcher("/onlinemarket/public/logout", "POST"))
                 .logoutSuccessUrl("/onlinemarket/public/login?logout")
                 .permitAll()
             );

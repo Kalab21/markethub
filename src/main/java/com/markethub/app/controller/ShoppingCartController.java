@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/onlinemarket/cart")
@@ -40,41 +40,33 @@ public class ShoppingCartController {
     @Autowired
     private AccessGuard accessGuard;
 
-    /** The cart, after checking that it belongs to the signed-in buyer. */
-    private ShoppingCart ownedCart(Long cartId) {
-        ShoppingCart cart = shoppingCartService.getShoppingCartById(cartId);
-        accessGuard.requireOwnerOrAdmin(cart.getBuyer());
-        return cart;
+    /** The signed-in buyer's cart, created here (inside a mutation) if the account has none yet. */
+    private ShoppingCart currentCart() {
+        return userService.ensureCart(userDetailsServiceImpl.getCurrentUser().getUserId());
     }
 
-    @GetMapping("/{cartId}/addproduct/{productId}")
-    public String addProductToCart(@PathVariable("cartId") Long cartId, @PathVariable("productId") Long productId){
-        ownedCart(cartId);
-        Product product = productService.getProductById(productId);
-        shoppingCartService.addProductToShoppingCart(cartId, product);
-        return "redirect:/onlinemarket/secured/services/products/list";
-    }
-
-    @GetMapping("/addproduct/{productId}")
-    public String addProductToCartByUser(@PathVariable("productId") Long productId){
-        long uid = userDetailsServiceImpl.getCurrentUser().getUserId();
-        ShoppingCart cart = userService.ensureCart(uid);
+    @PostMapping("/products/{productId}/add")
+    public String addProductToCart(@PathVariable("productId") Long productId) {
+        ShoppingCart cart = currentCart();
         Product product = productService.getProductById(productId);
         shoppingCartService.addProductToShoppingCart(cart.getCartId(), product);
         return "redirect:/onlinemarket/secured/services/products/list";
     }
 
-
     @GetMapping("/me")
-    public String loadMyCart(){
+    public String loadMyCart() {
         long uid = userDetailsServiceImpl.getCurrentUser().getUserId();
         return "redirect:/onlinemarket/cart/" + uid;
     }
 
-    @GetMapping("/{buyerId}")
-    public String loadShoppingCartById(@PathVariable("buyerId") long buyerId, Model model){
+    /** Read only: a buyer without a cart yet sees an empty one, and nothing is saved. */
+    @GetMapping("/{buyerId:\\d+}")
+    public String loadShoppingCartById(@PathVariable("buyerId") long buyerId, Model model) {
         accessGuard.requireSelfOrAdmin(buyerId);
-        ShoppingCart cart = userService.ensureCart(buyerId);
+        ShoppingCart cart = userService.getUserById(buyerId).getShoppingCart();
+        if (cart == null) {
+            cart = new ShoppingCart();
+        }
         double total = cart.getProducts().stream().mapToDouble(p -> p.getPrice()).sum();
         model.addAttribute("shoppingCart", cart);
         model.addAttribute("cartTotal", total);
@@ -82,36 +74,23 @@ public class ShoppingCartController {
         return "secured/services/buyer/cart/cartPage";
     }
 
-    @GetMapping("/{cartId}/delete/{productId}")
-    public String removeProductFromCart(@PathVariable("productId") Long productId, @PathVariable("cartId") Long cartId){
-        ownedCart(cartId);
-        shoppingCartService.deleteProductFromCart(productId, cartId);
-        ShoppingCart cart= shoppingCartService.getShoppingCartById(cartId);
-        String buyerId=cart.getBuyer().getUserId().toString();
-        return "redirect:/onlinemarket/cart/"+buyerId;
+    @PostMapping("/products/{productId}/remove")
+    public String removeProductFromCart(@PathVariable("productId") Long productId) {
+        ShoppingCart cart = currentCart();
+        shoppingCartService.deleteProductFromCart(productId, cart.getCartId());
+        return "redirect:/onlinemarket/cart/" + userDetailsServiceImpl.getCurrentUser().getUserId();
     }
 
-    @GetMapping("/{cartId}/checkout/{userId}")
-    public String checkOutProductsFromCart(@PathVariable("cartId") Long cartId, @PathVariable("userId") Long userId){
-
-        ShoppingCart cart = ownedCart(cartId);
-        accessGuard.requireSelfOrAdmin(userId);
-        if (cart.getBuyer() == null || !userId.equals(cart.getBuyer().getUserId())) {
-            throw new org.springframework.security.access.AccessDeniedException("The cart does not belong to that buyer");
+    @PostMapping("/checkout")
+    public String checkOutProductsFromCart() {
+        User buyer = userDetailsServiceImpl.getCurrentUser();
+        ShoppingCart cart = currentCart();
+        if (cart.getProducts().isEmpty()) {
+            return "redirect:/onlinemarket/cart/" + buyer.getUserId();
         }
-        List<Product> cartProducts= cart.getProducts();
-        double cartPrice= 0;
-        for (Product product: cartProducts){
-            cartPrice= cartPrice+ product.getPrice();
-        }
-        User buyer= userService.getUserById(userId);
-        Order order= new Order("Pending", LocalDate.now(), cartPrice, buyer);
-        orderService.saveOrder(order);
-
-        shoppingCartService.deleteAllProductsFromCart(cartId);
-        return "redirect:/orders/user/" + userId + "?ordered";
-
+        double cartPrice = cart.getProducts().stream().mapToDouble(Product::getPrice).sum();
+        orderService.saveOrder(new Order("Pending", LocalDate.now(), cartPrice, buyer));
+        shoppingCartService.deleteAllProductsFromCart(cart.getCartId());
+        return "redirect:/orders/user/" + buyer.getUserId() + "?ordered";
     }
-
-
 }

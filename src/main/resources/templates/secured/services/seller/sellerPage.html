@@ -50,11 +50,13 @@
                            class="btn btn-sm btn-outline-primary btn-icon">
                             <i class="fa-solid fa-pen"></i>Edit
                         </a>
-                        <a th:href="@{|/onlinemarket/secured/services/products/delete/${product.productId}|}"
-                           class="btn btn-sm btn-outline-danger btn-icon"
-                           onclick="return confirm('Delete this product? This action cannot be undone.')">
-                            <i class="fa-solid fa-trash"></i>Delete
-                        </a>
+                        <form th:action="@{|/onlinemarket/secured/services/products/${product.productId}/delete|}"
+                              method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger btn-icon"
+                                    onclick="return confirm('Delete this product? This action cannot be undone.')">
+                                <i class="fa-solid fa-trash"></i>Delete
+                            </button>
+                        </form>
                     </div>
                 </td>
             </tr>

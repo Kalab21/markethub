@@ -39,10 +39,15 @@ and order listing/deletion in the order API.
 
 Self-registration only accepts `BUYER` or `SELLER`; any other requested role is rejected.
 
-**Known gaps** (demo scope): product management lives under `/onlinemarket/secured/services/products/**`
-and the order, cart, address, review and payment endpoints sit under "any authenticated user", so
-they do not check that the caller owns the resource. The one ownership check is the MVC product
-delete, which only lets a seller delete their own products.
+**Resource-level rules** (enforced by `AccessGuard` in the controllers, on top of the URL rules):
+
+- Creating, editing or deleting a product (web and API) requires an approved seller; admins are exempt.
+- A seller can only change or list their own products; an update keeps the original seller.
+- A buyer can only read, cancel or delete their own orders and use their own cart. The owner of a new order is the signed-in user, whatever the request body says.
+- User-management, address, payment and review endpoints are admin only.
+- Refusals throw `AccessDeniedException`, which the global handler returns as `403`.
+
+**Remaining gap** (demo scope): order cancel and delete are `GET` links, so CSRF tokens do not cover them.
 
 ## Domain Model
 
@@ -129,7 +134,7 @@ Admin approves it.
 
 ## Testing
 
-39 tests across 7 test classes using JUnit 5, Mockito, MockMvc and H2 in-memory — no MySQL required for CI.
+62 tests across 8 test classes using JUnit 5, Mockito, MockMvc and H2 in-memory — no MySQL required for CI.
 
 ```
 UserServiceImplTest                8 tests  (register, role whitelist, approve seller, CRUD)
@@ -139,9 +144,10 @@ ProductApiControllerTest           5 tests  (@WebMvcTest + MockMvc, service mock
 ProductRepositoryIntegrationTest   6 tests  (@DataJpaTest on H2)
 UserRepositoryIntegrationTest      8 tests  (@DataJpaTest on H2)
 MarketHubApplicationTests          1 test   (@SpringBootTest context load)
+AuthorizationIntegrationTest      23 tests  (@SpringBootTest + MockMvc, real filter chain: roles, seller approval, ownership)
 ```
 
-The suite does not run against MySQL and does not exercise the security filter chain end to end.
+The suite does not run against MySQL. Authorization is exercised through the real security filter chain against H2.
 
 GitHub Actions runs `mvn clean verify` and then `docker build` on every push to `main` and every pull request.
 

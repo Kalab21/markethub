@@ -19,7 +19,7 @@ place orders. It is a server-rendered Spring MVC + Thymeleaf application backed 
 - **Seller approval** — new sellers register as *pending*; only an admin can approve them
 - **Cart-to-order flow** — cart totals, checkout into a `Pending` order, cancel and order history
 - **Server-rendered UI** — Thymeleaf layouts with self-hosted Bootstrap 5.3 and Font Awesome 6
-- **Automated tests + CI** — 39 JUnit 5 tests on H2, Maven + Docker image build on every push and PR
+- **Automated tests + CI** — 62 JUnit 5 tests on H2, Maven + Docker image build on every push and PR
 
 ## Product experience
 
@@ -70,21 +70,23 @@ Concrete controls in the code:
 - URL authorization: `/onlinemarket/secured/services/admin/**` requires `ADMIN`, `…/buyer/**` requires `BUYER`, everything outside public pages requires login
 - `@PreAuthorize("hasRole('ADMIN')")` on seller approval and the admin user/order API
 - Self-registration only accepts the `BUYER` or `SELLER` role
-- Sellers can only delete products they own (MVC delete checks the product's seller)
+- Seller approval is enforced: creating, editing or deleting a product (web and API) requires an approved seller; admins are exempt
+- Ownership is enforced per record: sellers can only change their own products, buyers can only read, cancel or delete their own orders and use their own cart, and admins keep access to everything
+- The owner of a new product or order is always the signed-in user, never a value from the request body; unauthorized access returns `403`
+- Role gates cover the user-management, address, payment and review endpoints (admin only)
 
-Known limitations: most other endpoints check authentication but not resource ownership,
-and seller approval is recorded but not yet enforced before a seller can list products.
-See [Project scope](#project-scope).
+Order cancel and delete links are still plain `GET` requests, so CSRF tokens do not cover them. See [Project scope](#project-scope).
 
 ## Testing
 
-39 tests across 7 test classes, run with `mvn clean verify` against an in-memory H2 database:
+62 tests across 8 test classes, run with `mvn clean verify` against an in-memory H2 database:
 
 | Type | Classes | Tests |
 |------|---------|-------|
 | Service unit tests (Mockito) | `UserServiceImplTest`, `ProductServiceImplTest`, `ShoppingCartServiceImplTest` | 19 |
 | Repository tests (`@DataJpaTest`, H2) | `UserRepositoryIntegrationTest`, `ProductRepositoryIntegrationTest` | 14 |
 | Controller tests (`@WebMvcTest`, MockMvc) | `ProductApiControllerTest` | 5 |
+| Authorization tests (`@SpringBootTest`, MockMvc, real security filter chain) | `AuthorizationIntegrationTest` | 23 |
 | Application context | `MarketHubApplicationTests` | 1 |
 
 GitHub Actions runs the full Maven build, then builds the Docker image. JaCoCo coverage is uploaded as a build artifact.
@@ -146,9 +148,7 @@ and a local MySQL database. It is not a production commerce deployment.
 - **Payments are not processed.** Checkout creates a `Pending` order from the cart total;
   no payment provider is integrated. A `Payment` entity and CRUD endpoints exist as an
   early prototype for stored payment methods but are not used by checkout.
-- **Authorization is role-based, not fully ownership-based.** Several order, cart, user,
-  address, review and product API endpoints only require a logged-in user.
-- **Seller approval exists** as an admin workflow (new sellers register as pending and an admin approves them), but the approved status is not yet enforced before a seller can list products.
+- **Order cancel and delete use `GET` links.** They are ownership-checked but not CSRF-protected; a production version would make them `POST` or `DELETE` requests.
 - The credentials in `docker-compose.yml` and `.env.example` are local demo defaults, not secrets.
 
 ## Technical documentation

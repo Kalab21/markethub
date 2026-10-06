@@ -1,6 +1,7 @@
 package com.markethub.app.controller;
 
 import com.markethub.app.model.Product;
+import com.markethub.app.security.AccessGuard;
 import com.markethub.app.service.ProductService;
 import com.markethub.app.service.imp.UserDetailsServiceImpl;
 import jakarta.validation.Valid;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,10 +21,19 @@ public class ProductController {
 
     private final ProductService productService;
     private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final AccessGuard accessGuard;
 
-    public ProductController(ProductService productService, UserDetailsServiceImpl userDetailsServiceImpl) {
+    public ProductController(ProductService productService, UserDetailsServiceImpl userDetailsServiceImpl,
+                             AccessGuard accessGuard) {
         this.productService = productService;
         this.userDetailsServiceImpl = userDetailsServiceImpl;
+        this.accessGuard = accessGuard;
+    }
+
+    /** The owner and the reviews are never taken from the submitted form. */
+    @InitBinder("product")
+    void restrictBinding(WebDataBinder binder) {
+        binder.setDisallowedFields("seller", "seller.*", "reviews", "reviews.*");
     }
 
     @GetMapping("/list")
@@ -52,6 +63,7 @@ public class ProductController {
 
     @GetMapping("/my-products/{userId}")
     public String displaySellerProducts(@PathVariable("userId") long userId, Model model) {
+        accessGuard.requireSelfOrAdmin(userId);
         model.addAttribute("products", productService.getAllProductsBySellerId(userId));
         model.addAttribute("currentUser", userDetailsServiceImpl.getCurrentUser());
         return "secured/services/seller/sellerPage";
@@ -59,6 +71,7 @@ public class ProductController {
 
     @GetMapping("/new-product")
     public ModelAndView displayNewProductForm() {
+        accessGuard.requireApprovedSellerOrAdmin();
         Product product = new Product();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("product", product);
@@ -69,19 +82,29 @@ public class ProductController {
 
     @GetMapping("/update-product/{id}")
     public String displayUpdateProductForm(Model model, @PathVariable("id") long id) {
-        model.addAttribute("product", productService.getProductById(id));
+        accessGuard.requireApprovedSellerOrAdmin();
+        Product existing = productService.getProductById(id);
+        accessGuard.requireOwnerOrAdmin(existing.getSeller());
+        model.addAttribute("product", existing);
         return "secured/services/seller/product-form";
     }
 
     @PostMapping("/save-product")
     public String saveProduct(Model model, @Valid @ModelAttribute("product") Product product, BindingResult result) {
+        accessGuard.requireApprovedSellerOrAdmin();
+        com.markethub.app.model.User cu = userDetailsServiceImpl.getCurrentUser();
+        if (product.getProductId() == 0) {
+            product.setSeller(cu);
+        } else {
+            // An update: only the owner (or an admin) may change a product, and it keeps its owner.
+            Product existing = productService.getProductById(product.getProductId());
+            accessGuard.requireOwnerOrAdmin(existing.getSeller());
+            product.setSeller(existing.getSeller());
+            product.setReviews(existing.getReviews());
+        }
         if (result.hasErrors()) {
             model.addAttribute("errors", result.getAllErrors());
             return "secured/services/seller/product-form-new";
-        }
-        com.markethub.app.model.User cu = userDetailsServiceImpl.getCurrentUser();
-        if (product.getSeller() == null) {
-            product.setSeller(cu);
         }
         productService.saveProduct(product);
         return "redirect:/onlinemarket/secured/services/products/my-products/" + cu.getUserId();
@@ -89,11 +112,10 @@ public class ProductController {
 
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") long id) {
+        accessGuard.requireApprovedSellerOrAdmin();
         com.markethub.app.model.User currentUser = userDetailsServiceImpl.getCurrentUser();
         com.markethub.app.model.Product product = productService.getProductById(id);
-        if (product.getSeller() == null || product.getSeller().getUserId() != currentUser.getUserId()) {
-            return "redirect:/onlinemarket/secured/services/products/my-products/" + currentUser.getUserId();
-        }
+        accessGuard.requireOwnerOrAdmin(product.getSeller());
         productService.deleteById(id);
         return "redirect:/onlinemarket/secured/services/products/my-products/" + currentUser.getUserId();
     }

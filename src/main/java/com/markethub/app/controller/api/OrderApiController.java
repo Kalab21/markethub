@@ -3,6 +3,7 @@ package com.markethub.app.controller.api;
 import com.markethub.app.DTO.OrderResponse;
 import com.markethub.app.model.Order;
 import com.markethub.app.service.OrderService;
+import com.markethub.app.security.AccessGuard;
 import org.springframework.data.domain.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,9 +25,11 @@ import java.util.List;
 public class OrderApiController {
 
     private final OrderService orderService;
+    private final AccessGuard accessGuard;
 
-    public OrderApiController(OrderService orderService) {
+    public OrderApiController(OrderService orderService, AccessGuard accessGuard) {
         this.orderService = orderService;
+        this.accessGuard = accessGuard;
     }
 
     @GetMapping
@@ -41,18 +44,24 @@ public class OrderApiController {
     @GetMapping("/{id}")
     @Operation(summary = "Get order by ID")
     public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id) {
-        return ResponseEntity.ok(OrderResponse.from(orderService.getOrderById(id)));
+        Order order = orderService.getOrderById(id);
+        accessGuard.requireOwnerOrAdmin(order.getOwner());
+        return ResponseEntity.ok(OrderResponse.from(order));
     }
 
     @GetMapping("/user/{userId}")
     @Operation(summary = "Get orders by user ID")
     public ResponseEntity<List<OrderResponse>> getOrdersByUser(@PathVariable Long userId) {
+        accessGuard.requireSelfOrAdmin(userId);
         return ResponseEntity.ok(orderService.getOrdersByOwnerUserId(userId).stream().map(OrderResponse::from).toList());
     }
 
     @PostMapping
     @Operation(summary = "Create a new order")
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody Order order) {
+        // The buyer is the signed-in user, whatever the request body says.
+        order.setOrderId(null);
+        order.setOwner(accessGuard.currentUser());
         return ResponseEntity.status(HttpStatus.CREATED).body(OrderResponse.from(orderService.saveOrder(order)));
     }
 

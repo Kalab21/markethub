@@ -2,6 +2,7 @@ package com.markethub.app.controller.api;
 
 import com.markethub.app.DTO.ProductResponse;
 import com.markethub.app.model.Product;
+import com.markethub.app.security.AccessGuard;
 import com.markethub.app.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,9 +25,11 @@ import java.util.List;
 public class ProductApiController {
 
     private final ProductService productService;
+    private final AccessGuard accessGuard;
 
-    public ProductApiController(ProductService productService) {
+    public ProductApiController(ProductService productService, AccessGuard accessGuard) {
         this.productService = productService;
+        this.accessGuard = accessGuard;
     }
 
     @GetMapping
@@ -58,18 +61,32 @@ public class ProductApiController {
     @PostMapping
     @Operation(summary = "Create a new product")
     public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody Product product) {
+        accessGuard.requireApprovedSellerOrAdmin();
+        product.setProductId(0);
+        product.setReviews(null);
+        // A seller always creates products for themselves; only an admin may name another seller.
+        if (!accessGuard.isAdmin() || product.getSeller() == null) {
+            product.setSeller(accessGuard.currentUser());
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(ProductResponse.from(productService.saveProduct(product)));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update product by ID")
     public ResponseEntity<ProductResponse> updateProduct(@PathVariable long id, @Valid @RequestBody Product product) {
+        accessGuard.requireApprovedSellerOrAdmin();
+        Product existing = productService.getProductById(id);
+        accessGuard.requireOwnerOrAdmin(existing.getSeller());
+        product.setSeller(existing.getSeller());
+        product.setReviews(existing.getReviews());
         return ResponseEntity.ok(ProductResponse.from(productService.updateProduct(id, product)));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete product by ID")
     public ResponseEntity<Void> deleteProduct(@PathVariable long id) {
+        accessGuard.requireApprovedSellerOrAdmin();
+        accessGuard.requireOwnerOrAdmin(productService.getProductById(id).getSeller());
         productService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

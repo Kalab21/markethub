@@ -5,6 +5,7 @@ import com.markethub.app.controller.api.ProductApiController;
 import com.markethub.app.exception.ResourceNotFoundException;
 import com.markethub.app.model.Product;
 import com.markethub.app.repository.ShoppingCartRepository;
+import com.markethub.app.security.AccessGuard;
 import com.markethub.app.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ class ProductApiControllerTest {
     @Autowired ObjectMapper objectMapper;
     @MockBean ProductService productService;
     @MockBean ShoppingCartRepository shoppingCartRepository;
+    @MockBean AccessGuard accessGuard;
 
     @Test
     @WithMockUser
@@ -97,6 +99,7 @@ class ProductApiControllerTest {
     @Test
     @WithMockUser(roles = "SELLER")
     void deleteProduct_callsService_returns204() throws Exception {
+        when(productService.getProductById(1L)).thenReturn(new Product());
         mockMvc.perform(delete("/api/products/1").with(csrf()))
                 .andExpect(status().isNoContent());
     }

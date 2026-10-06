@@ -63,6 +63,20 @@ public class FormLoginSecurityConfig {
                         "/onlinemarket/public/**", "/onlinemarket/public/signup",
                         "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/error").permitAll()
                 .requestMatchers("/", "/onlinemarket").permitAll()
+                // Role gates for endpoints outside the role-named view paths. Ownership of individual
+                // records is checked in the controllers (see AccessGuard).
+                .requestMatchers("/onlinemarket/secured/services/users/**").hasRole("ADMIN")
+                .requestMatchers("/onlinemarket/secured/services/products/new-product",
+                        "/onlinemarket/secured/services/products/update-product/**",
+                        "/onlinemarket/secured/services/products/save-product",
+                        "/onlinemarket/secured/services/products/delete/**",
+                        "/onlinemarket/secured/services/products/my-products/**").hasRole("SELLER")
+                .requestMatchers(HttpMethod.POST, "/api/products").hasAnyRole("SELLER", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyRole("SELLER", "ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyRole("SELLER", "ADMIN")
+                .requestMatchers("/orders/**", "/onlinemarket/cart/**", "/api/cart/**").hasRole("BUYER")
+                .requestMatchers(HttpMethod.POST, "/api/orders").hasRole("BUYER")
+                .requestMatchers("/addresses/**", "/payment/**", "/reviews/**").hasRole("ADMIN")
                 .requestMatchers("/onlinemarket/secured/services/admin/**").hasRole("ADMIN")
                 .requestMatchers("/onlinemarket/secured/services/seller/**").hasRole("SELLER")
                 .requestMatchers("/onlinemarket/secured/services/buyer/**").hasRole("BUYER")

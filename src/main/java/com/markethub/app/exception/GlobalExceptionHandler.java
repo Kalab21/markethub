@@ -4,6 +4,7 @@ import com.markethub.app.DTO.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +37,13 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.joining(", "));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErrorResponse(LocalDateTime.now(), 400, "Bad Request", message, req.getRequestURI())
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                new ErrorResponse(LocalDateTime.now(), 403, "Forbidden", ex.getMessage(), req.getRequestURI())
         );
     }
 

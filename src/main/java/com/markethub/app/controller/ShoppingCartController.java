@@ -2,6 +2,7 @@ package com.markethub.app.controller;
 
 import com.markethub.app.model.Order;
 import com.markethub.app.model.Product;
+import com.markethub.app.security.AccessGuard;
 import com.markethub.app.model.ShoppingCart;
 import com.markethub.app.model.User;
 import com.markethub.app.service.OrderService;
@@ -36,8 +37,19 @@ public class ShoppingCartController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AccessGuard accessGuard;
+
+    /** The cart, after checking that it belongs to the signed-in buyer. */
+    private ShoppingCart ownedCart(Long cartId) {
+        ShoppingCart cart = shoppingCartService.getShoppingCartById(cartId);
+        accessGuard.requireOwnerOrAdmin(cart.getBuyer());
+        return cart;
+    }
+
     @GetMapping("/{cartId}/addproduct/{productId}")
     public String addProductToCart(@PathVariable("cartId") Long cartId, @PathVariable("productId") Long productId){
+        ownedCart(cartId);
         Product product = productService.getProductById(productId);
         shoppingCartService.addProductToShoppingCart(cartId, product);
         return "redirect:/onlinemarket/secured/services/products/list";
@@ -61,6 +73,7 @@ public class ShoppingCartController {
 
     @GetMapping("/{buyerId}")
     public String loadShoppingCartById(@PathVariable("buyerId") long buyerId, Model model){
+        accessGuard.requireSelfOrAdmin(buyerId);
         ShoppingCart cart = userService.ensureCart(buyerId);
         double total = cart.getProducts().stream().mapToDouble(p -> p.getPrice()).sum();
         model.addAttribute("shoppingCart", cart);
@@ -71,6 +84,7 @@ public class ShoppingCartController {
 
     @GetMapping("/{cartId}/delete/{productId}")
     public String removeProductFromCart(@PathVariable("productId") Long productId, @PathVariable("cartId") Long cartId){
+        ownedCart(cartId);
         shoppingCartService.deleteProductFromCart(productId, cartId);
         ShoppingCart cart= shoppingCartService.getShoppingCartById(cartId);
         String buyerId=cart.getBuyer().getUserId().toString();
@@ -80,7 +94,11 @@ public class ShoppingCartController {
     @GetMapping("/{cartId}/checkout/{userId}")
     public String checkOutProductsFromCart(@PathVariable("cartId") Long cartId, @PathVariable("userId") Long userId){
 
-        ShoppingCart cart= shoppingCartService.getShoppingCartById(cartId);
+        ShoppingCart cart = ownedCart(cartId);
+        accessGuard.requireSelfOrAdmin(userId);
+        if (cart.getBuyer() == null || !userId.equals(cart.getBuyer().getUserId())) {
+            throw new org.springframework.security.access.AccessDeniedException("The cart does not belong to that buyer");
+        }
         List<Product> cartProducts= cart.getProducts();
         double cartPrice= 0;
         for (Product product: cartProducts){

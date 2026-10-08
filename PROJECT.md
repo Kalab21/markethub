@@ -146,7 +146,7 @@ Admin approves it.
 
 ## Testing
 
-77 tests across 8 test classes using JUnit 5, Mockito, MockMvc and H2 in-memory — no MySQL required for CI.
+87 tests across 9 test classes using JUnit 5, Mockito, MockMvc and H2 in-memory — no MySQL required for CI.
 
 ```
 UserServiceImplTest                8 tests  (register, role whitelist, approve seller, CRUD)
@@ -157,6 +157,7 @@ ProductRepositoryIntegrationTest   6 tests  (@DataJpaTest on H2)
 UserRepositoryIntegrationTest      8 tests  (@DataJpaTest on H2)
 MarketHubApplicationTests          1 test   (@SpringBootTest context load)
 AuthorizationIntegrationTest      38 tests  (@SpringBootTest + MockMvc, real filter chain: roles, seller approval, ownership, CSRF, HTTP methods)
+WebPageIntegrationTest            10 tests  (@SpringBootTest + MockMvc: product detail page, navbar username, error pages, removed routes 404)
 ```
 
 The suite does not run against MySQL. Authorization is exercised through the real security filter chain against H2.

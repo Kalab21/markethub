@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
       layout:decorate="~{layouts/master-layout}">
 <head>
     <title>Server Error</title>
@@ -17,7 +18,10 @@
             </p>
         </div>
         <div class="d-flex justify-content-center flex-wrap gap-2">
-            <a th:href="@{/onlinemarket/public/login}" class="btn btn-primary btn-icon">
+            <a sec:authorize="isAuthenticated()" th:href="@{/onlinemarket/secured/services}" class="btn btn-primary btn-icon">
+                <i class="fa-solid fa-gauge-simple-high"></i>Go to Dashboard
+            </a>
+            <a sec:authorize="!isAuthenticated()" th:href="@{/onlinemarket/public/login}" class="btn btn-primary btn-icon">
                 <i class="fa-solid fa-right-to-bracket"></i>Go to Login
             </a>
             <a href="javascript:history.back()" class="btn btn-outline-secondary btn-icon">

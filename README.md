@@ -20,7 +20,7 @@ catalogue, fill a cart and place orders.
 - **Three role workflows** — Admin, Seller and Buyer each get their own dashboard and navigation
 - **Cart-to-order flow** — cart totals, checkout into a `Pending` order, cancel and order history
 - **Server-rendered UI** — Thymeleaf master layout with self-hosted Bootstrap 5.3 and Font Awesome 6
-- **Tested and built in CI** — 77 tests (38 authorization tests through the real security filter chain), Maven build and Docker image build on every push and pull request
+- **Tested and built in CI** — 87 tests (38 authorization tests through the real security filter chain), Maven build and Docker image build on every push and pull request
 
 ## Architecture
 
@@ -95,7 +95,7 @@ Full URL and ownership rules are in [PROJECT.md](PROJECT.md#security-architectur
 
 ## Testing
 
-77 tests across 8 test classes, run with `mvn clean verify` against an in-memory H2 database:
+87 tests across 9 test classes, run with `mvn clean verify` against an in-memory H2 database:
 
 | Type | Classes | Tests |
 |------|---------|-------|
@@ -103,6 +103,7 @@ Full URL and ownership rules are in [PROJECT.md](PROJECT.md#security-architectur
 | Repository tests (`@DataJpaTest`, H2) | `UserRepositoryIntegrationTest`, `ProductRepositoryIntegrationTest` | 14 |
 | Controller tests (`@WebMvcTest`, MockMvc) | `ProductApiControllerTest` | 5 |
 | Authorization, ownership and CSRF tests (`@SpringBootTest`, MockMvc, real security filter chain) | `AuthorizationIntegrationTest` | 38 |
+| Server-rendered pages (`@SpringBootTest`, MockMvc): product detail, navbar, error pages, removed routes | `WebPageIntegrationTest` | 10 |
 | Application context | `MarketHubApplicationTests` | 1 |
 
 GitHub Actions runs the full Maven build and tests, then builds the Docker image. JaCoCo coverage is uploaded as a build artifact.

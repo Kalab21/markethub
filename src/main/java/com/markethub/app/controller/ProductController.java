@@ -13,8 +13,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
-
 @Controller
 @RequestMapping({"onlinemarket/secured/services/products"})
 public class ProductController {
@@ -47,10 +45,11 @@ public class ProductController {
         return "secured/services/buyer/product/list";
     }
 
-    @GetMapping("/{id}")
+    /** Read-only product detail page, linked from the product list. */
+    @GetMapping("/{id:\\d+}")
     public String displayProductById(@PathVariable("id") long id, Model model) {
         model.addAttribute("product", productService.getProductById(id));
-        return "product/product-view";
+        return "secured/services/buyer/product/product-view";
     }
 
     @GetMapping("/my-products")
@@ -118,16 +117,5 @@ public class ProductController {
         accessGuard.requireOwnerOrAdmin(product.getSeller());
         productService.deleteById(id);
         return "redirect:/onlinemarket/secured/services/products/my-products/" + currentUser.getUserId();
-    }
-
-    @GetMapping(value = "/search")
-    public ModelAndView searchProducts(@RequestParam String searchString) {
-        ModelAndView modelAndView = new ModelAndView();
-        List<Product> products = productService.searchProducts(searchString);
-        modelAndView.addObject("products", products);
-        modelAndView.addObject("searchString", searchString);
-        modelAndView.addObject("productCount", products.size());
-        modelAndView.setViewName("product/list");
-        return modelAndView;
     }
 }

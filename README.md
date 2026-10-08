@@ -35,6 +35,16 @@ place orders. It is a server-rendered Spring MVC + Thymeleaf application backed 
 
 A single Spring Boot application with a conventional layered design:
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/markethub-architecture-dark.svg">
+    <img src="docs/markethub-architecture.svg" alt="MarketHub architecture: a browser used by Admin, Seller and Buyer sends HTTP requests into one Spring Boot application, through the Spring Security filter chain (form login, session, role rules, CSRF), Spring MVC controllers (Thymeleaf pages and /api REST endpoints), the service layer and Spring Data JPA repositories, to MySQL 8 over JDBC." width="1000">
+  </picture>
+</p>
+
+<details>
+<summary>Text version</summary>
+
 ```
 Browser  (Admin | Seller | Buyer)
    ↓
@@ -48,6 +58,8 @@ Spring Data JPA repositories
    ↓
 MySQL 8
 ```
+
+</details>
 
 Details — domain model, security rules, design decisions — are in [PROJECT.md](PROJECT.md).
 

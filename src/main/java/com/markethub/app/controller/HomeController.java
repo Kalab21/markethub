@@ -5,10 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
-//    @GetMapping(value = {"/", "/home"})
-//   public String home() {
-//       return "home/index";
-//    }
     @GetMapping(value = {"/","/onlinemarket","/public/home"})
     public String home0() {
         return "redirect:/onlinemarket/public/home";

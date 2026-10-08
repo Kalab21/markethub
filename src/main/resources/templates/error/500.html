@@ -1,23 +1,30 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/master-layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Error — MarketHub</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/cosmo/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-uhut8PejFZO8994oEgm/ZfAv0mW1/b83nczZzSwElbeILxwkN491YQXsCFTE6+nx"
-          crossorigin="anonymous">
+    <title>Server Error</title>
 </head>
 <body>
-<div class="container" style="padding-top: 5rem; text-align: center;">
-    <h1 style="font-size: 6rem; font-weight: 700; color: #e83e8c;">500</h1>
-    <h2 class="mb-3">Something Went Wrong</h2>
-    <p class="text-muted mb-4">
-        An unexpected error occurred on the server. Please try again or contact support if the problem persists.
-    </p>
-    <a href="/onlinemarket/public/login" class="btn btn-primary mr-2">Go to Login</a>
-    <a href="javascript:history.back()" class="btn btn-outline-secondary">Go Back</a>
+<div layout:fragment="content" class="container">
+    <div class="form-card mx-auto my-5 p-4 p-md-5 text-center" style="max-width: 640px;">
+        <div class="empty-state p-0">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <h1 class="display-4 fw-bold text-danger mb-1">500</h1>
+            <h5 class="mb-3">Something Went Wrong</h5>
+            <p class="mb-4">
+                An unexpected error occurred on the server. Please try again or contact support if the problem persists.
+            </p>
+        </div>
+        <div class="d-flex justify-content-center flex-wrap gap-2">
+            <a th:href="@{/onlinemarket/public/login}" class="btn btn-primary btn-icon">
+                <i class="fa-solid fa-right-to-bracket"></i>Go to Login
+            </a>
+            <a href="javascript:history.back()" class="btn btn-outline-secondary btn-icon">
+                <i class="fa-solid fa-arrow-left"></i>Go Back
+            </a>
+        </div>
+    </div>
 </div>
 </body>
 </html>

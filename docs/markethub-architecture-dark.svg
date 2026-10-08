@@ -1,36 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 900" width="1000" height="900" role="img" aria-label="MarketHub architecture: browser for Admin, Seller and Buyer, Spring Security filter chain, Spring MVC controllers with Thymeleaf pages and REST endpoints, service layer, Spring Data JPA repositories, MySQL 8, all inside one Spring Boot application">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 950" width="1000" height="950" role="img" aria-label="MarketHub architecture: a browser used by Admin, Seller and Buyer sends web requests into one Spring Boot application, through the Spring Security filter chain (form login, session, roles, CSRF), Spring MVC controllers (server-rendered Thymeleaf + Bootstrap pages and /api/** REST endpoints), the @Transactional service layer and Spring Data JPA repositories, to MySQL 8 over JDBC.">
 <style>text{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}</style>
-<rect width="1000" height="900" fill="#0d1117"/>
-<rect x="230" y="30" width="540" height="92" rx="12" fill="#11161d" stroke="#8b93e8" stroke-width="2"/>
-<text x="500.0" y="71.0" font-size="18" font-weight="700" fill="#e6edf3" text-anchor="middle">Browser</text>
-<text x="500.0" y="95.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">Admin  ·  Seller  ·  Buyer</text>
-<rect x="90" y="172" width="820" height="560" rx="18" fill="#11161d" stroke="#4a5280" stroke-width="2" stroke-dasharray="7 6"/>
-<text x="116" y="202" font-size="16" font-weight="700" fill="#8b93e8" text-anchor="start">Spring Boot application  (Java 17)</text>
-<path d="M500.0,122.0 L500.0,213.0" fill="none" stroke="#8b93e8" stroke-width="2.5"/>
-<path d="M500.0,226.0 L507.0,213.0 L493.0,213.0 z" fill="#8b93e8"/>
-<text x="514.0" y="152.0" font-size="13.5" font-weight="600" fill="#8b93e8" text-anchor="start">HTTP request</text>
-<rect x="230" y="226" width="540" height="92" rx="12" fill="#2b2410" stroke="#e3b341" stroke-width="2"/>
-<text x="500.0" y="267.0" font-size="18" font-weight="700" fill="#e3b341" text-anchor="middle">Spring Security filter chain</text>
-<text x="500.0" y="291.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">form login · session · role rules · CSRF</text>
-<path d="M500.0,318.0 L500.0,337.0" fill="none" stroke="#8b93e8" stroke-width="2.5"/>
-<path d="M500.0,350.0 L507.0,337.0 L493.0,337.0 z" fill="#8b93e8"/>
-<rect x="230" y="350" width="540" height="92" rx="12" fill="#161b22" stroke="#8b93e8" stroke-width="2"/>
-<text x="500.0" y="391.0" font-size="18" font-weight="700" fill="#e6edf3" text-anchor="middle">Spring MVC controllers</text>
-<text x="500.0" y="415.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">Thymeleaf pages  +  /api/** REST endpoints</text>
-<path d="M500.0,442.0 L500.0,461.0" fill="none" stroke="#8b93e8" stroke-width="2.5"/>
-<path d="M500.0,474.0 L507.0,461.0 L493.0,461.0 z" fill="#8b93e8"/>
-<rect x="230" y="474" width="540" height="92" rx="12" fill="#161b22" stroke="#8b93e8" stroke-width="2"/>
-<text x="500.0" y="515.0" font-size="18" font-weight="700" fill="#e6edf3" text-anchor="middle">Service layer</text>
-<text x="500.0" y="539.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">business rules · @Transactional</text>
-<path d="M500.0,566.0 L500.0,585.0" fill="none" stroke="#8b93e8" stroke-width="2.5"/>
-<path d="M500.0,598.0 L507.0,585.0 L493.0,585.0 z" fill="#8b93e8"/>
-<rect x="230" y="598" width="540" height="92" rx="12" fill="#161b22" stroke="#8b93e8" stroke-width="2"/>
-<text x="500.0" y="639.0" font-size="18" font-weight="700" fill="#e6edf3" text-anchor="middle">Spring Data JPA repositories</text>
-<text x="500.0" y="663.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">entities and derived queries</text>
-<path d="M500.0,690.0 L500.0,765.0" fill="none" stroke="#4fb3cf" stroke-width="2.5"/>
-<path d="M500.0,778.0 L507.0,765.0 L493.0,765.0 z" fill="#4fb3cf"/>
-<text x="514.0" y="760.0" font-size="13.5" font-weight="600" fill="#4fb3cf" text-anchor="start">JDBC</text>
-<rect x="230" y="778" width="540" height="92" rx="12" fill="#0f2430" stroke="#4fb3cf" stroke-width="2"/>
-<text x="500.0" y="819.0" font-size="18" font-weight="700" fill="#4fb3cf" text-anchor="middle">MySQL 8</text>
-<text x="500.0" y="843.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">H2 in tests  ·  Docker Compose locally</text>
+<rect width="1000" height="950" fill="#0d1117"/>
+<text x="60" y="40" font-size="14.5" font-weight="700" fill="#9aa4b2" text-anchor="start">Client</text>
+<rect x="230" y="30" width="540" height="88" rx="12" fill="#11161d" stroke="#8b93e8" stroke-width="2"/>
+<text x="500.0" y="69.0" font-size="18" font-weight="700" fill="#e6edf3" text-anchor="middle">Browser</text>
+<text x="500.0" y="93.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">Admin  ·  Seller  ·  Buyer</text>
+<rect x="60" y="170" width="880" height="560" rx="18" fill="#11161d" stroke="#4a5280" stroke-width="2" stroke-dasharray="7 6"/>
+<text x="84" y="200" font-size="15" font-weight="700" fill="#8b93e8" text-anchor="start">Application boundary  ·  one Spring Boot application (Java 17)</text>
+<path d="M500.0,118.0 L500.0,211.0" fill="none" stroke="#8b93e8" stroke-width="2.5"/>
+<path d="M500.0,224.0 L507.0,211.0 L493.0,211.0 z" fill="#8b93e8"/>
+<text x="514.0" y="149.0" font-size="13.5" font-weight="600" fill="#8b93e8" text-anchor="start">Web request</text>
+<rect x="230" y="224" width="540" height="92" rx="12" fill="#2b2410" stroke="#e3b341" stroke-width="2"/>
+<text x="500.0" y="265.0" font-size="18" font-weight="700" fill="#e3b341" text-anchor="middle">Spring Security filter chain</text>
+<text x="500.0" y="289.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">form login · server-side session · roles · CSRF</text>
+<path d="M500.0,316.0 L500.0,335.0" fill="none" stroke="#8b93e8" stroke-width="2.5"/>
+<path d="M500.0,348.0 L507.0,335.0 L493.0,335.0 z" fill="#8b93e8"/>
+<rect x="230" y="348" width="540" height="104" rx="12" fill="#161b22" stroke="#8b93e8" stroke-width="2"/>
+<text x="500.0" y="384.0" font-size="18" font-weight="700" fill="#e6edf3" text-anchor="middle">Spring MVC controllers</text>
+<text x="500.0" y="408.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">server-rendered UI: Thymeleaf + Bootstrap 5.3</text>
+<text x="500.0" y="429.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">/api/** REST endpoints</text>
+<path d="M500.0,452.0 L500.0,471.0" fill="none" stroke="#8b93e8" stroke-width="2.5"/>
+<path d="M500.0,484.0 L507.0,471.0 L493.0,471.0 z" fill="#8b93e8"/>
+<rect x="230" y="484" width="540" height="92" rx="12" fill="#161b22" stroke="#8b93e8" stroke-width="2"/>
+<text x="500.0" y="525.0" font-size="18" font-weight="700" fill="#e6edf3" text-anchor="middle">Service layer</text>
+<text x="500.0" y="549.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">business rules · @Transactional</text>
+<path d="M500.0,576.0 L500.0,595.0" fill="none" stroke="#8b93e8" stroke-width="2.5"/>
+<path d="M500.0,608.0 L507.0,595.0 L493.0,595.0 z" fill="#8b93e8"/>
+<rect x="230" y="608" width="540" height="92" rx="12" fill="#161b22" stroke="#8b93e8" stroke-width="2"/>
+<text x="500.0" y="649.0" font-size="18" font-weight="700" fill="#e6edf3" text-anchor="middle">Spring Data JPA repositories</text>
+<text x="500.0" y="673.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">Hibernate entities and queries</text>
+<rect x="60" y="780" width="880" height="140" rx="18" fill="#0f2430" stroke="#4fb3cf" stroke-width="2"/>
+<text x="84" y="810" font-size="15" font-weight="700" fill="#4fb3cf" text-anchor="start">Data</text>
+<path d="M500.0,700.0 L500.0,801.0" fill="none" stroke="#4fb3cf" stroke-width="2.5"/>
+<path d="M500.0,814.0 L507.0,801.0 L493.0,801.0 z" fill="#4fb3cf"/>
+<text x="514.0" y="745.0" font-size="13.5" font-weight="600" fill="#4fb3cf" text-anchor="start">JDBC</text>
+<rect x="230" y="814" width="540" height="86" rx="12" fill="#0d1117" stroke="#4fb3cf" stroke-width="2"/>
+<text x="500.0" y="852.0" font-size="18" font-weight="700" fill="#4fb3cf" text-anchor="middle">MySQL 8</text>
+<text x="500.0" y="876.0" font-size="14.5" font-weight="400" fill="#9aa4b2" text-anchor="middle">H2 in tests  ·  Docker Compose locally</text>
 </svg>

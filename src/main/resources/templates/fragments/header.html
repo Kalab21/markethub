@@ -47,7 +47,7 @@
                     <li sec:authorize="isAuthenticated()" class="nav-item">
                         <span class="username-pill">
                             <i class="fa-regular fa-circle-user me-1"></i>
-                            <sec:authentication property="principal.username"/>
+                            <span sec:authentication="name">user</span>
                         </span>
                     </li>
                     <li sec:authorize="hasAuthority('ROLE_BUYER')" class="nav-item">

@@ -1,10 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layouts/master-layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title th:text="${product.name}">Product</title>
 </head>
 <body>
+<div layout:fragment="content" class="container">
+    <div class="page-header d-flex align-items-start justify-content-between flex-wrap gap-3">
+        <div>
+            <h1 class="page-title" th:text="${product.name}">Product</h1>
+            <p class="page-subtitle" th:text="'SKU: ' + ${product.sku}"></p>
+        </div>
+        <a th:href="@{/onlinemarket/secured/services/products/list}" class="btn btn-outline-secondary btn-icon">
+            <i class="fa-solid fa-arrow-left"></i>All Products
+        </a>
+    </div>
+    <hr class="section-divider"/>
 
+    <div class="row g-4">
+        <div class="col-md-5">
+            <div class="product-card h-auto">
+                <div class="product-img-placeholder">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="form-card">
+                <div class="card-body">
+                    <p class="mb-4" th:text="${product.description}"></p>
+                    <dl class="row mb-4">
+                        <dt class="col-sm-4">Price</dt>
+                        <dd class="col-sm-8 fw-bold text-primary"
+                            th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}"></dd>
+                        <dt class="col-sm-4">In stock</dt>
+                        <dd class="col-sm-8" th:text="${product.quantity}"></dd>
+                        <dt class="col-sm-4">Seller</dt>
+                        <dd class="col-sm-8"
+                            th:text="${product.seller != null} ? ${product.seller.firstName + ' ' + product.seller.lastName} : '-'"></dd>
+                    </dl>
+                    <form sec:authorize="hasAuthority('ROLE_BUYER')"
+                          th:action="@{|/onlinemarket/cart/products/${product.productId}/add|}" method="post">
+                        <button type="submit" class="btn btn-primary btn-icon">
+                            <i class="fa-solid fa-cart-plus"></i>Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

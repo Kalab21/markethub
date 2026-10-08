@@ -15,16 +15,6 @@ public class HomeController {
         return "public/index";
     }
 
-    @GetMapping(value = {"/public/about","/onlinemarket/public/about"})
-    public String about() {
-        return "public/about";
-    }
-
-    @GetMapping(value = {"/public/virtualtour","/onlinemarket/public/virtualtour"})
-    public String virtualtour() {
-        return "public/virtualtour";
-    }
-
     @GetMapping(value = {"/secured/home","/onlinemarket/secured/home"})
     public String home2() {
 

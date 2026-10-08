@@ -249,6 +249,12 @@ body {
 }
 .form-control.is-invalid, .form-select.is-invalid { border-color: var(--mh-danger); }
 .form-control.is-invalid:focus { box-shadow: 0 0 0 3px rgba(220,38,38,0.15); }
+/* Bootstrap embeds these icons as data: URIs, which the CSP (img-src falls back to 'self') blocks;
+   point them at self-hosted copies instead. */
+.form-select { --bs-form-select-bg-img: url("../images/icons/select-chevron.svg"); }
+.form-select.is-invalid, .was-validated .form-select:invalid { --bs-form-select-bg-icon: url("../images/icons/invalid.svg"); }
+.form-control.is-invalid, .was-validated .form-control:invalid { background-image: url("../images/icons/invalid.svg"); }
+.btn-close { --bs-btn-close-bg: url("../images/icons/btn-close.svg"); }
 .form-card { background: #fff; border-radius: var(--mh-radius); border: 1px solid var(--mh-border); box-shadow: var(--mh-shadow-sm); }
 .form-card .card-body { padding: 2rem; }
 .form-error-msg { font-size: 0.8rem; color: var(--mh-danger); margin-top: 0.25rem; }
